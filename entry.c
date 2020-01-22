@@ -146,7 +146,7 @@ void Hack_z4_entry(float waves_secondary_mirror_despace)
 {
     int i;
     for(i=0; i<Entry_number; i++) {
-        if (strstr(Entry_list[i], "# Z4")) {
+        if (strstr(Entry_list[i], "# Z4") || strstr(Entry_list[i], "# z4")) {
             float z4;
             char comment[MAX_STRING];
             sscanf(Entry_list[i], "%f # %[^\n]", &z4, comment);

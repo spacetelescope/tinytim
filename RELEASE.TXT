@@ -305,3 +305,11 @@ coeffs in the wfc3_ir.pup file. The V2,V3 coordinates for both IR and
 UVIS have been updated using a more recent idctab, as described in the
 files.
 
+Version 7.5
+-----------
+Nov 19 2012
+
+Fixed bug in focus adjustment for NICMOS,  modify par file z4 vs. Z4.
+
+
+
