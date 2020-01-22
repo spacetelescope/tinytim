@@ -333,7 +333,7 @@ float **Read_psf( int position )
 
 	Pars.current_pos = position;
 
-	printf( "  Input PSF dimensions are %d by %d (%f arcsec/pixel).\n", nx, ny, Pars.psf_scale );
+	printf( "  Input critically-sampled undistorted PSF dimensions are %d by %d (%f arcsec/pixel).\n", nx, ny, Pars.psf_scale );
 
         return( psf );
 }
@@ -354,7 +354,7 @@ float **Read_scene( int *nx, int *ny )
 	{
         	printf( "Reading input scene from %s.\n", Pars.scene_input_file );
         	image = Read_FITS( Pars.scene_input_file, nx, ny );
-        	printf("  Input scene dimensions are %d by %d (%g arcsec/pixel).\n", 
+        	printf("  Input (undistorted) scene dimensions are %d by %d (%g arcsec/pixel).\n", 
 			*nx, *ny, Pars.scene_pixel_scale );
 	}
 	else
@@ -363,7 +363,7 @@ float **Read_scene( int *nx, int *ny )
 		sscanf( &Pars.scene_input_file[6], "%f_%f", &x_arcsec, &y_arcsec );
 		*nx = ceil(x_arcsec / Pars.psf_scale);
 		*ny = ceil(y_arcsec / Pars.psf_scale);
-        	printf("  Input scene dimensions are %g by %g arcseconds.\n", x_arcsec, y_arcsec );
+        	printf("  Input (undistorted) scene dimensions are %g by %g arcseconds.\n", x_arcsec, y_arcsec );
 		image = NULL;
 	}
 

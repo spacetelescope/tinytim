@@ -89,8 +89,10 @@ void Compute_grid_dims( float *psf_diameter, int chip, int num_waves, float *wav
 		max_int_diameter = 30.0;
 	max_int_diameter = floor(max_int_diameter*10.) / 10.0;
 
-	if ( chip < ACS_WFC1 || chip > ACS_SBC ) 
-		printf("\nAssuming detector pixel size of %7.5f arcsec\n", pixel_size );
+	if ( (chip < ACS_WFC1) || (chip > WFC3_IR))
+	  printf("\nAssuming detector pixel size of %7.5f arcsec\n", pixel_size );
+	else
+	  printf("\nUsing undistorted critical sampling pixel size of %7.5f arcsec\n", pixel_size);
 
 	do {
 		printf("\nThe maximum computable PSF size is %.1f arcsec.\n",

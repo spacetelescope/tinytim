@@ -35,7 +35,7 @@
 #define  LASTZERNIKE    22
 #define  MAX_INSTR      30
 #define  NUM_ACS_KERNELS 3
-#define  NUM_WFC3_KERNELS 2
+#define  NUM_WFC3_KERNELS 3
 #define  MAX_STRING  550
 #define  MAX_PSFS       1000
 
@@ -116,8 +116,8 @@ struct paramstruct {
                 wfc3_pad_y[3],
                 wfc3_pad_rot[3],
                 wfc3_aber[5][6][6],
-        wfc3_kernel_wavelength[NUM_ACS_KERNELS],
-        wfc3_kernel[NUM_ACS_KERNELS][3][3];
+        wfc3_kernel_wavelength[NUM_WFC3_KERNELS],
+        wfc3_kernel[NUM_WFC3_KERNELS][3][3];
 
     char	tt3_param_file[MAX_STRING], scene_input_file[MAX_STRING],
         scene_output_file[MAX_STRING], scene_psf_file[MAX_STRING];

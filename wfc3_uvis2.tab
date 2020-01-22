@@ -1,19 +1,22 @@
 # Test Zernike file for WFC3 UVIS2 Channel
 # No aberrations at present.
 # March 2008
+#  Initial implementation
+# April 2010
+#  Set Z4-Z8 terms to non-zero to activate coeffs in .pup file
   547.     # Reference wavelength (nm)
   22       # Last Zernike in file
   0.       # Z1 = (Not used)
   0.       # Z2 = X (V2) tilt
   0.       # Z3 = Y (V3) tilt
-  0.       # Z4 = Focus
-  0.        # Z5 = 0 degree astigmatism
-  0.        # Z6 = 45 degree astigmatism
-  0.        # Z7 = X (V2) coma
-  0.        # Z8 = Y (V3) coma
-  0.        # Z9 = X (V2) clover
-  0.        # Z10 = Y (V3) clover
-  0.        # Z11 = 3rd order spherical
+  1e-12    # Z4 = Focus
+  1e-12    # Z5 = 0 degree astigmatism
+  1e-12    # Z6 = 45 degree astigmatism
+  1e-12    # Z7 = X (V2) coma
+  1e-12    # Z8 = Y (V3) coma
+  0.       # Z9 = X (V2) clover
+  0.       # Z10 = Y (V3) clover
+  0.       # Z11 = 3rd order spherical
   0.       # Z12 = 0 degree Spherical astigmatism
   0.       # Z13 = 45 degree Spherical astigmatism
   0.       # Z14 = X (V2) Ashtray

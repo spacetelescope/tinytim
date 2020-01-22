@@ -265,8 +265,26 @@ WFC3 support
 
 Version 7.1
 -----------
-Added "secondary mirror despace" as a parameter to tiny1 which is used to modify
-the Z4 Focus parameter as follows:   Z4 +=  despace * 0.011.   Despace is in microns
-between primary and secondary mirrors, with negative despace corresponding to moving
-the mirrors closer together.
+Dec 2010
+
+Added "secondary mirror despace" as a parameter to tiny1 which is used
+to modify the Z4 Focus parameter as follows: Z4 += despace * 0.011.
+Despace is in microns between primary and secondary mirrors, with
+negative despace corresponding to moving the mirrors closer together.
+
+Version 7.2
+-------------
+Feb 2011 
+
+Clarifications to WFC3 and ACS PSF and scene pixel size messages,,
+mainly indicators that the pixel size shown is critically-sampled
+and/or undistorted/distorted.
+
+Updates to the WFC3 .pup and .tab files.  These include the
+wfc3_uvis1.pup, wfc3_uvis2.pup, wfc3_uvis1.tab, wfc3_uvis2.tab,
+wfc3_ir.pup, and wfc3_ir.tab files. The UVIS .tab files have been
+updated to set the Z4-Z8 coeffs to non-zero, which activates the
+coeffs in the .pup files. The .pup files have had their X/Y astig and
+coma coeffs swapped, to match their intended use in the code.  A 3rd
+charge diffusion kernel has also been added to the UVIS .pup files.
 

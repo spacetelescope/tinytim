@@ -1,6 +1,7 @@
 # Test Zernike file for WFC3 IR Channel
 # No aberrations at present.
 # Oct 2007
+#  Initial implementation
   547.     # Reference wavelength (nm)
   22       # Last Zernike in file
   0.       # Z1 = (Not used)

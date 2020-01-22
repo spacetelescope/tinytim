@@ -357,7 +357,7 @@ int main( int argc, char *argv[] )
 
 		Compute_aberrations( Pars.x[position], Pars.y[position] );
 
-		printf( "  Writing scene to %s (%d by %d pixels)\n", 
+		printf( "  Writing distorted scene to %s (%d by %d pixels)\n", 
 			name, scene_nx_out, scene_ny_out );
 		Write_FITS( name, scene_out[0], scene_nx_out, scene_ny_out, IMAGE_FILE, 1 );
 
