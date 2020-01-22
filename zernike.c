@@ -4,6 +4,7 @@
  * 	Julian_day : Convert date to Julian day
  *    Compute_nicmos_aber : Compute Nicmos focus & field dependent aberrations
  *       Field_aberration : Compute field dependent aberration
+ *   Wfc3_field_aberration : Compute WFC3 field dependent aberration
  *   Acs_field_aberration : Compute ACS field dependent aberration
  *    Compute_aberrations : Compute field/focus dependent aberrations
  *	Nicmos_aberrations : Determine aberrations for NICMOS
@@ -15,6 +16,7 @@
  * Date      : May 1993
  *
  * Modifications :
+ *
  *      August 1993 - JEK
  *        Added FOC focus change on Oct 7, 1992, to SetAberrations.
  *
@@ -29,6 +31,9 @@
  *
  *      May 1999 - JEK
  *	  Added NicmosAberrations
+ *
+ *      March 2008 - RNH/FS
+ *        Added WFC3 support
  */
 
 #include <stdio.h>
@@ -118,6 +123,7 @@ static void Compute_nicmos_aber( int psf_x, int psf_y )
 	 * later.                                                          */
 
 	z4 = Pars.focus * 0.547;	/* convert focus to microns RMS */
+        z5 = z6 = z7 = z8 = 0.0;
 
 	if ( Pars.adjust_for_focus != 0 )
 	{
@@ -187,6 +193,57 @@ static float Field_aberration( int x, int y, int aberration )
 }
 
 /*--------------------------------------------------------------------------
+*  Wfc3_field_aberration
+*	Compute the field dependent aberration for a given
+*       position on the detector.
+*
+*---------------------------------------------------------------------------*/
+static float Wfc3_field_aberration( int xdet, int ydet, int znum )
+{
+
+	int 	i, j;
+	float	d, val, x, y, convert;
+
+	val = 0.0;
+
+	if ( Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 ) {
+		d       = 40.96;
+		convert = 0.547/0.6328;
+	} else {
+	
+		d       = 10.24;
+		convert = 0.547;
+	}	
+
+	/* focus (znum=0) is defined relative to chip, not global, (x,y) system */
+
+	if ( Pars.chip == WFC3_UVIS1) {
+	       /* This was for the focus of the ACS camera. We do not have that, i.e.
+	          we have given the focii in the same way as all the other coefficients
+	          && znum != 0 )
+	       */
+	   ydet = ydet + 2048;
+	}	
+
+	x = xdet / d;      /* + 4; it is not clear where that came from in the ACS code */
+	y = ydet / d;      /* + 4; it is not clear where that came from in the ACS code */
+
+	/* compute field-dependent aberrations offsets in V2,V3 pupil system; *
+         * coefficients are applied to detector x,y pixel coordinates and     *
+	 * return aberrations in V2,V3 pupil system.  The field-              *
+	 * dependent coefficients are in microns and have to be converted to  *
+	 * waves at 547 nm.						      */
+	
+	for ( i = 0; i <= 5; ++i )
+		for ( j = 0; j <= 5; ++j )
+			val += Pars.wfc3_aber[znum][i][j] * pow((float)x,(float)i) * pow((float)y,(float)j);
+
+        /* the aberrations are given in 628.3 nm for the UVIS chip and in 1 micron for the IR chip */	
+	return( val / convert );
+
+} /* Wfc3_field_aberration */
+
+/*--------------------------------------------------------------------------
 *  Acs_field_aberration
 *	Compute the field dependent aberration for a given
 *       position on the detector.
@@ -221,7 +278,6 @@ static float Acs_field_aberration( int xdet, int ydet, int znum )
 	for ( i = 0; i <= 5; ++i )
 		for ( j = 0; j <= 5; ++j )
 			val += Pars.acs_aber[znum][i][j] * pow((float)x,(float)i) * pow((float)y,(float)j);
-
 	return( val / 0.547 );
 
 } /* Acs_field_aberration */
@@ -265,15 +321,27 @@ void Compute_aberrations( int psf_x, int psf_y )
 	}
 	else if ( Pars.chip >= ACS_WFC1 && Pars.chip <= ACS_SBC && Pars.adjust_for_xy != 0 )
 	{
-		Pars.focus +=   Acs_field_aberration( psf_x, psf_y, 0 );
-		Pars.xastig +=  Acs_field_aberration( psf_x, psf_y, 1 );
-		Pars.yastig +=  Acs_field_aberration( psf_x, psf_y, 2 );
-		Pars.xcoma +=   Acs_field_aberration( psf_x, psf_y, 3 );
-		Pars.ycoma +=   Acs_field_aberration( psf_x, psf_y, 4 );
+		Pars.focus  += Acs_field_aberration( psf_x, psf_y, 0 );
+		Pars.xastig += Acs_field_aberration( psf_x, psf_y, 1 );
+		Pars.yastig += Acs_field_aberration( psf_x, psf_y, 2 );
+		Pars.xcoma  += Acs_field_aberration( psf_x, psf_y, 3 );
+		Pars.ycoma  += Acs_field_aberration( psf_x, psf_y, 4 );
 	}
 	else if ( Pars.chip >= NICMOS_1 && Pars.chip <= NICMOS_3 )
 	{
 		Compute_nicmos_aber( psf_x, psf_y );
+	}
+	else if (Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 || Pars.chip == WFC3_IR)
+	{
+            	Pars.focus  += Wfc3_field_aberration( psf_x, psf_y, 0 );
+		Pars.xastig += Wfc3_field_aberration( psf_x, psf_y, 1 );
+		Pars.yastig += Wfc3_field_aberration( psf_x, psf_y, 2 );
+		Pars.xcoma  += Wfc3_field_aberration( psf_x, psf_y, 3 );
+		Pars.ycoma  += Wfc3_field_aberration( psf_x, psf_y, 4 );
+	}
+	else
+	{
+	   printf("No field dependent aberrations.");
 	}
 
 } /* Compute_aberrations */
@@ -671,7 +739,8 @@ void Get_aberrations( struct DateStruct *obs_date )
 	      case STIS_CCD :   Default_dir("stisccd.tab", table_name); break;
 	      case STIS_NUV :   Default_dir("stisnuv.tab", table_name); break;
 	      case STIS_FUV :   Default_dir("stisfuv.tab", table_name); break;
-	      case WFC3_VIS :   Default_dir("wfc3_vis.tab", table_name); break;
+	    case WFC3_UVIS1 :   Default_dir("wfc3_uvis1.tab", table_name); break;
+	    case WFC3_UVIS2 :   Default_dir("wfc3_uvis2.tab", table_name); break;
 	       case WFC3_IR :   Default_dir("wfc3_ir.tab", table_name); break;
 	}
 
@@ -704,8 +773,10 @@ void Get_aberrations( struct DateStruct *obs_date )
 		Pars.observation_pam = -9.49;
 		Read_zernike_data( file );
 	}
-	else if ( Pars.chip >= WFPC2_PC )
+	else if ( Pars.chip >= WFPC2_PC ) 
+	{
 		Read_zernike_data( file );
+	}	
 	else
 		Set_old_aberrations( obs_date, file );
 

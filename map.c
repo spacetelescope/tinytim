@@ -98,7 +98,7 @@ float **Compute_map( int map_dim, int chip, float theta, float v2, float v3 )
 	 * spacing of the primary in pupil units.  Only a portion of    *
 	 * the secondary is illuminated from a given field angle.       */
 
-	diam_illum_mm = 267.3;            /* Diameter of beam at secodary in mm */
+	diam_illum_mm = 267.3;            /* Diameter of beam at secondary in mm */
 
 	/* t_v2 and t_v3 are shifts in mm on the secondary of the chief ray *
 	 * from the OTA axis.  FocF96V3 and the like are in arcseconds.   *

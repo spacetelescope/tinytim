@@ -8,6 +8,8 @@
  *  Author   :  John Krist 
  *  Date     :  October 2000
  *
+ * Modified to include WFC3, Richard Hook & Felix Stoehr, March 2008
+ *
  */
 
 #include <stdio.h>
@@ -26,12 +28,13 @@
 *  Outputs :
 *	v2, v3 : Position in arcsec in pupil coordinate system
 *
-*  NOTE : This routine only works for the ACS
+*  NOTE : This routine only works for the ACS & WFC3
 *-------------------------------------------------------------------------*/
 void XY_to_V2V3( float x, float y, float *v2, float *v3, int camera )
 {
-	float	xc, yc, x2, x3, x4, y2, y3, y4;
+	float	xc, yc, x2, x3, x4, y2, y3, y4, root2;
 
+        root2 = sqrt(2.0);
 
 	/* transforms are relative to the reference position */
 
@@ -60,11 +63,18 @@ void XY_to_V2V3( float x, float y, float *v2, float *v3, int camera )
 	/* in HRC/SBC, field +V2 is left, +V3 is up; for WFC, +V2 is right, +V3 is down. */
 	/* Pars.v2 and Pars.v3 are in pupil coordinate system. */
 
+        /* For WFC3 there is a 45 degree rotation as well as a flip */
+
 	if ( camera == ACS_HRC || camera == ACS_HRC_OFFSPOT || camera == ACS_SBC )
 	{
 		*v2 = -Pars.v2 - xc;
 		*v3 = -Pars.v3 + yc;
 	}
+        else if ( camera == WFC3_IR || camera == WFC3_UVIS1 || camera == WFC3_UVIS2 )
+        {
+                *v2 = -Pars.v2 + (-xc + yc)/root2;
+                *v3 = -Pars.v3 + (xc + yc)/root2;
+        }
 	else
 	{
 		*v2 = -Pars.v2 + xc;
@@ -75,6 +85,10 @@ void XY_to_V2V3( float x, float y, float *v2, float *v3, int camera )
 
 	*v2 = -(*v2);
         *v3 = -(*v3);
+
+        /*
+        printf("X,Y, V2,V3 (pupil): %f %f %f %f\n",x,y,*v2,*v3);
+        */
 }
 
 /*------------------------------------------------------------------------
@@ -89,12 +103,13 @@ void XY_to_V2V3( float x, float y, float *v2, float *v3, int camera )
 *  Outputs :
 *	x, y : Detector pixel position
 *
-*  NOTE : This routine only works for the ACS
+*  NOTE : This routine only works for the ACS & WFC3
 *-------------------------------------------------------------------------*/
 void V2V3_to_XY( float *x, float *y, float v2, float v3, int camera )
 {
-	float	xc, yc, xc2, yc2, xc3, yc3, xc4, yc4;
+	float	xc, yc, xc2, yc2, xc3, yc3, xc4, yc4, root2;
 
+       root2 = sqrt(2.0);
 
 	/* Pars.v2 and Pars.v3 are in pupil (not field coordinates) */
 
@@ -103,6 +118,11 @@ void V2V3_to_XY( float *x, float *y, float v2, float v3, int camera )
 		xc = (-Pars.v2) - v2;
 		yc = v3 - (-Pars.v3);
 	}
+        else if ( camera == WFC3_IR || camera == WFC3_UVIS1 || camera == WFC3_UVIS2 )
+        {
+                xc = -Pars.v2 + (-v2 + v3)/root2;
+                yc = -Pars.v3 + (v2 + v3)/root2;
+        }
 	else
 	{
 		xc = v2 - (-Pars.v2);
@@ -194,7 +214,7 @@ void v2v3( int camera, int x, int y, float *v2, float *v3 )
 		*v2 = -(x * cos(t) - y * sin(t)) + Pars.v2;
 		*v3 = x * sin(t) + y * cos(t) + Pars.v3;
 	}
-	else if ( camera >= ACS_WFC1 && camera <= ACS_SBC )
+	else if ( camera >= ACS_WFC1 && camera <= WFC3_IR )
 		XY_to_V2V3( (float)x, (float)y, v2, v3, camera );
 	else
 	{

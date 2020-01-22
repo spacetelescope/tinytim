@@ -6,6 +6,9 @@
 *	Distort : Map input image onto a distorted grid
 *
 * Written by John Krist, November 2000
+*
+* Typo in polynomial expression fixed, Richard Hook, March 2008
+*
 */
 
 #include <stdio.h>
@@ -238,7 +241,7 @@ static void *Distort_thread( void *tpars )
 {
 	float	y1, y2, xc, yc, xc0, yc0, xin, yin;
 	double  xout, yout, dout;
-	float   x, y, *cxc, *cyc, sample_area, subpixel_area;
+	float   x, y, *cxc, *cyc, sample_area, subpixel_area=0.0;
 	int	xout_pix, yout_pix, old_xout_pix, old_yout_pix, subfactor;
 	int	center_in_pix_x, center_in_pix_y, center_out_pix_x, center_out_pix_y;
 	struct	dparstruct *vpars;
@@ -272,8 +275,9 @@ static void *Distort_thread( void *tpars )
 	yc0 =   cyc[0]*y + cyc[1]*x + 
 		cyc[2]*y*y + cyc[3]*x*y + cyc[4]*x*x +
 		cyc[5]*y*y*y + cyc[6]*x*y*y + cyc[7]*x*x*y + cyc[8]*x*x*x +
-		cyc[9]*y*y*y*y + cyc[10]*x*y*y*y + cyc[11]*x*x*x*y + cyc[12]*x*x*x*y + cyc[13]*x*x*x*x;
+		cyc[9]*y*y*y*y + cyc[10]*x*y*y*y + cyc[11]*x*x*y*y + cyc[12]*x*x*x*y + cyc[13]*x*x*x*x;
 
+       /* Bug in above line fixed, RNH, March 2008 */
 
 	old_xout_pix = -1;
 	old_yout_pix = -1;
@@ -317,14 +321,14 @@ static void *Distort_thread( void *tpars )
 			xin = (xc - xc0) / Pars.psf_scale + center_in_pix_x;
 			yin = (yc - yc0) / Pars.psf_scale + center_in_pix_y;
 
-			/*
+                        /*
 			printf("-----------------------------------\n");
 			printf("center_in_pix_x = %d\n", center_in_pix_x);
 			printf("Pars.psf_scale = %f\n", Pars.psf_scale);
 			printf("xout, yout = %f %f\n", xout, yout);
 			printf("x, y = %f %f    xc, yc = %f %f\n", x, y, xc, yc);
 			printf("xin, yin = %f %f\n", xin, yin);
-			*/
+                        */
 
 			if ( xin >= 0 && xin < vpars->ipars->nx && yin >= 0 && yin < vpars->ipars->ny )
 			{

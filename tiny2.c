@@ -5,6 +5,10 @@
  *
  *  Author  :  John Krist (STScI)
  *  Date    :  January 1992
+ *
+ *  Some modifications for WFC3
+ *
+ * Richard Hook & Felix Stoehr, ST-ECF, March 2008
  */
 
 #include <stdio.h>
@@ -25,7 +29,7 @@
 #include <unistd.h>
 #endif
 
-static void Acs_param_file( char *acs_param_file )
+static void TT3_param_file( char *tt3_param_file )
 {
 	FILE	*file;
 	int	x_range, y_range;
@@ -42,11 +46,23 @@ static void Acs_param_file( char *acs_param_file )
 		y_range = 1023;
 	}
 
-	file = fopen( acs_param_file, "w" );
+        if ( Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 )
+        {
+                x_range = 4095;
+                y_range = 2050;
+        }
 
-	fprintf( file, "# %s : optional parameter file for tiny3\n", acs_param_file );
+        if ( Pars.chip == WFC3_IR )
+        {  
+                x_range = 1013;
+                y_range = 1013;
+        }
+
+	file = fopen( tt3_param_file, "w" );
+
+	fprintf( file, "# %s : optional parameter file for tiny3\n", tt3_param_file );
 	fprintf( file, "#\n" );
-	fprintf( file, "# Note : you do not have to modify this file to produce an ACS PSF\n" );
+	fprintf( file, "# Note : you do not have to modify this file to produce an ACS or WFC3 PSF\n" );
 	fprintf( file, "# unless you want to generate a simulated observation convolved\n" );
 	fprintf( file, "# with a PSF and then mapped onto a distorted grid.\n" );
 	fprintf( file, "###################################################################\n" );
@@ -72,13 +88,17 @@ static void Acs_param_file( char *acs_param_file )
 /*---------------------------------------------------------------------------------*/
 int main( int argc, char *argv[] )
 {
-	int     pos, i, is_position_dependent, is_wfpc2, is_nicmos, is_acs;
+	int     pos, i, is_position_dependent, is_wfpc2, is_nicmos, is_acs, is_wfc3;
 	float   **poly_psf, **mono_psf;
-	char    fname[MAX_STRING], acs_param_file[MAX_STRING];
+	char    fname[MAX_STRING], tt3_param_file[MAX_STRING];
 	time_t  start_time, end_time;
+
+#ifdef TT_THREADED
+#ifdef MACOSX        
 	int	mib[2], numproc;
 	size_t  len;
-
+#endif
+#endif
 
 	if ( argc < 2 )
 	{
@@ -111,15 +131,19 @@ int main( int argc, char *argv[] )
 	is_wfpc2 = 0;
 	is_nicmos = 0;
 	is_acs = 0;
+        is_wfc3 = 0;
+
 	if ( Pars.chip >= WFPC2_PC && Pars.chip <= WFPC2_WFC_4 )
 		is_wfpc2 = 1;
 	else if ( Pars.chip >= NICMOS_1 && Pars.chip <= NICMOS_3 )
 		is_nicmos = 1;
 	else if ( Pars.chip >= ACS_WFC1 && Pars.chip <= ACS_SBC )
 		is_acs = 1;
+        else if ( Pars.chip >= WFC3_UVIS1 && Pars.chip <= WFC3_IR )
+                is_wfc3 = 1;
 
 	is_position_dependent = 0;
-	if ( Pars.chip <= 8 || is_wfpc2 || is_nicmos || is_acs || Pars.chip == STIS_CCD ) 
+	if ( Pars.chip <= 8 || is_wfpc2 || is_nicmos || is_acs || Pars.chip == STIS_CCD || is_wfc3 )
 		is_position_dependent = 1;
 
 	/* Allocate image array for polychromatic and monochromatic PSFs */
@@ -137,7 +161,7 @@ int main( int argc, char *argv[] )
 
 	time( &start_time );
 
-	if ( is_acs )
+	if ( is_acs || is_wfc3 )
 		printf("Intermediate PSF dimensions are ");
 	else
 		printf("Integrated PSF dimensions are ");
@@ -163,14 +187,14 @@ int main( int argc, char *argv[] )
 
 		if ( Pars.num_pos <= 100 )
 		{
-			if ( !is_acs )
+			if ( !is_acs && !is_wfc3 )
 				sprintf( fname, "%s%02d.fits", Pars.root_name, pos );
 			else
 				sprintf( fname, "%s%02d_psf.fits", Pars.root_name, pos );
 		}
 		else
 		{
-			if ( !is_acs )
+			if ( !is_acs && !is_wfc3 )
 				sprintf( fname, "%s%03d.fits", Pars.root_name, pos );
 			else
 				sprintf( fname, "%s%03d_psf.fits", Pars.root_name, pos );
@@ -207,16 +231,16 @@ int main( int argc, char *argv[] )
 		for ( i = 0; i < Pars.num_comments; ++i )
 			free( Pars.comment[i] );
 
-	/* if ACS, write out template optional parameter file for tiny3 */
+	/* if ACS or WFC3, write out template optional parameter file for tiny3 */
 
-	if ( is_acs )
+	if ( is_acs || is_wfc3)
 	{
-		sprintf( acs_param_file, "%s.tt3", Pars.root_name );
+		sprintf( tt3_param_file, "%s.tt3", Pars.root_name );
 		printf( "\nWriting template optional parameter file for tiny3 to %s.\n",
-			acs_param_file );
-		Acs_param_file( acs_param_file );
+			tt3_param_file );
+		TT3_param_file( tt3_param_file );
 
-		printf("\nTo continue ACS PSF processing, you must run tiny3 to resample\n");
+		printf("\nTo continue PSF processing for ACS and WFC3, you must run tiny3 to resample\n");
 		printf("and distort the PSF.  You may also process a simulated scene (see\n");
 		printf("the manual for details).\n\n" );
 		printf("Just to distort the PSF, issue this command :\n");

@@ -1,0 +1,182 @@
+# Pupil Table :  wfc3_ir.pup
+# Do not change the order of these entries!
+# Date : April 2008
+# Preliminary version of WFC3 IR channel pupil informationi for Tiny Tim 7.0.
+#
+# Added preliminary distortion coefficients, from Colin Cox, March 2008
+# Added preliminary cold-mask information from George Hartig, March 2008
+#----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+# WFC3 IR wavelength range
+#
+  900 1700  = min, max detector wavelength (nm)
+#
+# WFC3 IR cold mask obscuration parameters 
+# These are from George Hartig, they are close, but not the same as the old NICMOS ones.
+#
+ 0.354 = WFC3 IR Secondary radius
+ 0.061 = WFC3 IR Spider width
+ 0.9755 = WFC3 IR Outer radius of cold mask
+#
+# Mask position
+#
+ 0.0 0.0 = Mask X,Y positions
+#
+# WFC3 IR camera rotation (relative to OTA)
+#
+  135.0  = WFC3 IR camera rotation
+#
+# Pixel size (arcsecs)
+#
+   0.13 = WFC3 IR pixel size
+#
+# Axial offset of WFC3 IR camera
+#
+  0.0 0.0 = WFC3 IR Camera 2 V2,V3 axial offset
+#
+#  WFC3 IR field dependent aberration coefficients (in microns)
+#
+# Focus
+#
+ -1.20318149e-02 -1.01187543e-04 7.07476814e-07 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 7.69803251e-04 4.23580589e-08 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ -7.67207830e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+#
+# X astig
+#
+ -8.35400173e-03 5.13194852e-04 -3.99141208e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 2.01150767e-04 -3.92886164e-08 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ -1.97495797e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+#
+# Y astig
+#
+ 1.33063083e-03 1.68392660e-04 -8.55061473e-09 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ -2.58073858e-05 -3.33276120e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ -2.00120320e-08 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+#
+# X coma
+#
+1.25930198e-02 -5.80506052e-04 5.25377957e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ -5.67486735e-04 4.09168135e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 2.15934792e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+#
+# Y coma
+#
+ 2.31206647e-02 1.81284830e-04 -5.30494748e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ -1.39564501e-04 3.97479493e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ -2.06559126e-06 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+#
+# WFC3 IR geometric distortion coefficients; used to convert
+# detector X,Y position to telescope V2,V3
+#
+# V2,V3 (pupil) coordinates of reference position
+# 
+  0.00000  -0.0010    = in arcsec
+#
+# Detector X,Y coordinates of reference position
+#
+   507 507  = pixels
+#
+# V2, V3 (pupil) coordinates of WFC3 IR camera center
+#
+  0.0000 0.00000      = in arcsec
+#
+# X,Y -> V2 transform coefficients (4th order)
+#
+-7.834721E-6          1.354925E-1
+-2.666651E-10          3.238674E-6        -1.381910E-10
+3.737046E-14         1.843860E-11  4.087322E-13         3.758686E-12
+0.0 0.0 0.0 0.0 0.0
+#
+# X,Y -> V3 transform coefficients
+#
+ 1.210825E-1          8.907462E-6
+3.563704E-6         2.909743E-10          8.195221E-7
+2.676912E-11        -3.854757E-13         1.336036E-11        -5.999974E-14
+0.0 0.0 0.0 0.0 0.0
+#
+# V2,V3 -> X
+#
+ 4.775553E-4           7.380483E0
+-7.414314E-8         -1.457858E-3          1.313760E-7
+ -1.377528E-10          5.729815E-7  -1.438840E-9          5.382542E-8  
+0.0 0.0 0.0 0.0 0.0
+#
+# V2,V3 -> Y
+#
+ 8.258834E0         -5.429441E-4 
+ -2.009371E-3          1.718983E-7         -3.689799E-4
+ 8.509658E-7          1.510508E-9          2.749957E-7         1.801569E-10
+0.0 0.0 0.0 0.0 0.0
+#
+# Diffusion kernels to model the IPC effect
+#
+#  ********* Note - these are based on vac measurements kindly provided
+#            by George Hartig in May 2008 - they are empirical and match what was seen in therman vac.
+#
+# These numbers are known to be a function of quadrant and readout, and not determined as
+# a function of wavelength. The values here are averages.
+#
+1.000  = Wavelength (microns) of kernel 1
+#
+# Kernel 1
+#
+0.002  0.038  0.002
+0.038  0.840  0.038
+0.002  0.038  0.002
+#
+1.600  = Wavelength (microns) of kernel 2
+#
+# Kernel 2
+#
+0.002  0.038  0.002
+0.038  0.840  0.038
+0.002  0.038  0.002
+#
+# Additional field dependent charge diffusion relation coefficients
+# Currently these are just place holders. 
+#
+  2  = number of wavelengths at which coefficients are defined
+#
+#
+  1.000  = wavelength 1
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+#
+  1.600  = wavelength 2
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0

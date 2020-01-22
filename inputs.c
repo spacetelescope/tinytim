@@ -22,6 +22,8 @@
  *	 Added ACS, STIS
  *     J. Krist - October 1998
  *	 Replaced GetFilterwaves & GetFilterweights with GetFilter
+ *     R. N. Hook & F. Stoehr, March 2008
+ *       Add WFC3
  */
 
 #include <stdio.h>
@@ -158,8 +160,9 @@ static FILE *Open_filter_file( int chip )
 	       case STIS_CCD : Default_dir( "stisccd.fil", filename ); break;
 	       case STIS_NUV : Default_dir( "stisnuv.fil", filename ); break;
 	       case STIS_FUV : Default_dir( "stisfuv.fil", filename ); break;
-	       case WFC3_VIS : Default_dir( "wfpc2.fil", filename ); break;
-	        case WFC3_IR : Default_dir( "nicmos2.fil", filename ); break;
+	     case WFC3_UVIS1 : Default_dir( "wfc3uvis.fil", filename ); break;
+	     case WFC3_UVIS2 : Default_dir( "wfc3uvis.fil", filename ); break;
+	        case WFC3_IR : Default_dir( "wfc3ir.fil", filename ); break;
 	
 		     default : printf("Error: Unknown camera mode\n"); exit(2);
 	}
@@ -292,6 +295,7 @@ int Read_positions( char *filename, int *x, int *y )
 	FILE    *file;
 	int     i;
 	char    line[MAX_STRING];
+        float   xx, yy;
 
 	if ( (file = fopen(&filename[1], "r")) == NULL )
 	{
@@ -302,7 +306,9 @@ int Read_positions( char *filename, int *x, int *y )
 	i = 0;
 	while( fgets(line, MAX_STRING-1, file) != NULL && i < MAX_POSITIONS )
 	{
-		sscanf(line, "%d %d", &x[i], &y[i]);
+		sscanf(line, "%f %f", &xx, &yy);
+                x[i] = (int) xx;
+                y[i] = (int) yy;
 		++i;
 	}
 

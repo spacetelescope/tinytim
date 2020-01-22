@@ -26,6 +26,9 @@
  *
  *	J. Krist - Aug 1999
  *		Added NICMOS & OTA obscuration rotations
+ *
+ *      R. Hook & F. Stoehr - April 2008
+ *              Added WFC3 IR channel support
  */
 
 #include <stdio.h>
@@ -220,7 +223,7 @@ static void Draw_wfpc_spiders( float **pupil, int dim, float wfpc_v2, float wfpc
 void Compute_pupil( int dim, int psf_x, int psf_y, float **pupil )
 {
 	int     i, x, y;
-	float   radius, **newimage, wfpc_v2, wfpc_v3, center;
+	float   radius, **newimage, wfpc_v2=-1e20, wfpc_v3=-1e20, center;
 	float	nicmos_x_offset, nicmos_y_offset, **temp, **temp1;
 	float	wfc3_x_offset, wfc3_y_offset;
         float   stis_x_offset, stis_y_offset;
@@ -412,7 +415,7 @@ void Compute_pupil( int dim, int psf_x, int psf_y, float **pupil )
 		Free_image( newimage );
 	}
 
-        /* WFC3 IR channel cold mask obscuration */
+        /* WFC3 IR channel cold mask obscuration - note no pad covers */
 
 	if ( Pars.chip == WFC3_IR )
         {
@@ -427,16 +430,6 @@ void Compute_pupil( int dim, int psf_x, int psf_y, float **pupil )
 			radius * 2. + 4., Pars.camera_spider_width * radius );
          	Dark_rectangle( pupil, dim, dim, wfc3_x_offset, wfc3_y_offset, 
 			Pars.camera_spider_width * radius, radius * 2. + 4. );
-
-        	/* Paint in the pad covers  */
-
-	       	for (i = 0; i < 3; i++ )
-            		Dark_rot_rect( pupil, dim, dim,
-               	         	Pars.wfc3_pad_v3[i] * radius + wfc3_x_offset,
-                       	 	Pars.wfc3_pad_v2[i] * radius + wfc3_y_offset,
-                       		Pars.wfc3_pad_x[i] * radius,
-                       		Pars.wfc3_pad_y[i] * radius,
-	                       	Pars.wfc3_pad_rot[i] * M_PI / 180.0 );
 	}
 
 	/* Rotate the pupil */

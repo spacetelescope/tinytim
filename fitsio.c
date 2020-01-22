@@ -10,6 +10,7 @@
  *	Write_FITS : Write image or PSF to FITS file
  *
  * Written by John Krist, November 2000
+ * Updated for WFC3, Richard Hook & Felix Stoehr, March 2008
  */
 
 #include <stdio.h>
@@ -17,6 +18,7 @@
 
 #ifndef MACOSX
 #include <malloc.h>
+#include <stdlib.h>
 #else
 #include <stdlib.h>
 #endif
@@ -267,7 +269,7 @@ static void Write_FITS_header( FILE *file, int nx, int ny, int type )
 
 	if ( type == IMAGE_FILE )
 	{
-		Header_string( "OPT_FILE", Pars.acs_param_file, "Optional parameter file used", &record[80*(i+1)] );
+		Header_string( "OPT_FILE", Pars.tt3_param_file, "Optional parameter file used", &record[80*(i+1)] );
 		Header_string( "IN_FILE",  Pars.scene_input_file, "Undistorted input scene", &record[80*(i+2)] );
 		Header_string( "PSF_FILE", Pars.scene_psf_file, "Undistorted input PSF", &record[80*(i+3)] ); 
 		sprintf( &record[80*(i+4)], "X_IMAGE = %20d / Image X center on detector", Pars.scene_x_center );

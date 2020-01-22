@@ -107,7 +107,7 @@ void Compute_poly_psf( int pos_index, float **poly_psf, float **mono_psf )
 	int     i, crit_dim, previous_dim, x, y, stat, psf_x, psf_y;
 	int     files_written, pupil_allocated, skip_psf;
 	complex **pupil;
-	float   **temp, max_weight, weight_limit;
+	float   **temp, max_weight, weight_limit=1e10;
 	char	pupil_name[MAX_STRING];
 
 	/* Define name for the temporary pupil/OPD file */

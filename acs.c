@@ -11,6 +11,7 @@
  *	Add_psfs : Add PSFs to scene
  *
  * Written by John Krist, November 2000
+ * Modified for WFC3 support, Richard Hook & Felix Stoehr, March 2008
  */
 
 #include <stdio.h>
@@ -37,26 +38,34 @@ struct sparstruct {
 };
 
 /*--------------------------------------------------------------------------
- * Compute_acs_kernel_xy :
- *    Compute the field-dependent WFC/HRC charge diffusion kernel.
+ * Compute_kernel_xy :
+ *    Compute the field-dependent charge diffusion kernel for the CCDs (ACS/WFC, WFC3/UVIS etc).
+ *    Now also uses the same mechanism for WFC3/IR.
+ *
+ * Note - was called Compute_acs_kernel_xy.
+ *
+ * Renamed and generalised for WFC3, Richard Hook, March 2008.
+ * WFC/IR added, Richard Hook, May 2008.
+ *
  *------------------------------------------------------------------------*/
-float Compute_acs_kernel_xy( int xdet, int ydet, float lambda )
+float Compute_kernel_xy( int xdet, int ydet, float lambda )
 {
         int     i, iw, j;
         float   d, r, sigma, sigma0, sigma1, tot, w0, w1, x, y;
 
 
-	if ( Pars.chip == ACS_HRC || Pars.chip == ACS_HRC_OFFSPOT )
+	if ( Pars.chip == ACS_HRC || Pars.chip == ACS_HRC_OFFSPOT || Pars.chip == WFC3_IR )
 		d = 10.24;
 	else
 		d = 40.96;
 
+        /* This offset is really only valid for ACS where an over-sized grid was used */
         x = xdet / d + 4;
 
 	/* coefficients are for global x,y detector coordinates (assuming *
 	 * that the chips are perfectly butted together)		  */
 
-	if ( Pars.chip == ACS_WFC1 )
+	if ( Pars.chip == ACS_WFC1 || Pars.chip == WFC3_UVIS1 )
 		ydet = ydet + 2048;
 
         y = ydet / d + 4;
@@ -72,6 +81,7 @@ float Compute_acs_kernel_xy( int xdet, int ydet, float lambda )
 		iw = i;
 		w0 = Pars.blur_xy_wavelength[iw];
 		w1 = Pars.blur_xy_wavelength[iw+1];
+                
         	sigma0 = 0.0;
         	sigma1 = 0.0;
         	for ( i = 0; i <= 5; ++i )
@@ -80,7 +90,7 @@ float Compute_acs_kernel_xy( int xdet, int ydet, float lambda )
 			{
                         	sigma0 += Pars.blur_xy_sigma[iw][i][j] * pow((float)x,(float)i) * pow((float)y,(float)j);
                         	sigma1 += Pars.blur_xy_sigma[iw+1][i][j] * pow((float)x,(float)i) * pow((float)y,(float)j);
-			}
+                        }
 		}
 		sigma = (sigma1 - sigma0) / (w1 - w0) * (lambda - w0) + sigma0;
 	}
@@ -93,27 +103,40 @@ float Compute_acs_kernel_xy( int xdet, int ydet, float lambda )
 				sigma += Pars.blur_xy_sigma[iw][i][j] * pow((float)x,(float)i) * pow((float)y,(float)j);
 	}
 
-	/* compute gaussian kernel */
+	/* Compute gaussian kernel */
+        /* Added the case of sigma = 0.0 - just return a delta function */
 
-	tot = 0.0;
+        if ( sigma > 0.0 )
+        {
 
-	for ( j = 0; j <= 2; ++j )
-	{
-		for ( i = 0; i <= 2; ++i )
-		{
-			r = sqrt((i-1)*(i-1)+(j-1)*(j-1));
-			Pars.kernel_xy[j][i] = exp(-0.5*(r/sigma)*(r/sigma));
-			tot += Pars.kernel_xy[j][i];
-		}
-	}
+      	      tot = 0.0;
 
-	for ( j = 0; j <= 2; ++j )
-		for ( i = 0; i <= 2; ++i )
+	      for ( j = 0; j <= 2; ++j )
+	      {
+		     for ( i = 0; i <= 2; ++i )
+		     {
+		   	   r = sqrt((i-1)*(i-1)+(j-1)*(j-1));
+			   Pars.kernel_xy[j][i] = exp(-0.5*(r/sigma)*(r/sigma));
+			   tot += Pars.kernel_xy[j][i];
+		     }
+	       }
+
+	       for ( j = 0; j <= 2; ++j )
+	   	    for ( i = 0; i <= 2; ++i )
 			Pars.kernel_xy[j][i] /= tot;
+          }
+          else
+          {
+             for ( j = 0; j <= 2; ++j )
+                     for ( i = 0; i <= 2; ++i )
+                           Pars.kernel_xy[j][i] = 0.0;
+
+              Pars.kernel_xy[1][1] = 1.0;
+           }
 
 	return( sigma );
 
-} /* Compute_acs_kernel_xy */
+} /* Compute_kernel_xy */
 
 /*-------------------------------------------------------------------------
 *  Compute_acs_kernel :
@@ -168,6 +191,56 @@ void Compute_acs_kernel( float wavelength, float weight )
                    Pars.weighted_kernel[j][i] += (Pars.kernel[j][i] * weight);
 
 } /* Compute_acs_kernel */
+
+/*-------------------------------------------------------------------------
+*  Compute_wfc3_kernel :
+*       Compute WFC3 UVIS CCD pixel scatter (charge diffusion)
+*       function at given wavelength.  Essentially the same as the ACS
+*       version but separated to allow different logic in future.
+*
+*  Also used for the WFC3/IR channel - for the IPC effect rather than charge diffusion.
+*
+*  Note - the preliminary WFC2 UVIS charge diffusion kernels were at only
+*         two wavelengths (250nm and 810nm), but the logic here work in this case too.
+*
+*   Richard Hook & Felix Stoehr, ST-ECF, March 2008.
+*
+*--------------------------------------------------------------------------*/
+
+void Compute_wfc3_kernel( float wavelength, float weight )
+{
+        int     i, iw, j;
+        float   tot;
+
+        iw = 0;
+        while ( wavelength > Pars.wfc3_kernel_wavelength[iw] && iw < NUM_WFC3_KERNELS-2 )
+                ++iw;
+
+        tot = 0.0;
+
+        for ( j = 0; j <= 2; ++j )
+        {
+            for ( i = 0; i <= 2; ++i )
+            {
+                   Pars.kernel[j][i] =
+                     (Pars.wfc3_kernel[iw+1][j][i] - Pars.wfc3_kernel[iw][j][i]) /
+                     (Pars.wfc3_kernel_wavelength[iw+1] - Pars.wfc3_kernel_wavelength[iw])
+                     * (wavelength - Pars.wfc3_kernel_wavelength[iw])
+                     + Pars.wfc3_kernel[iw][j][i];
+
+                   tot += Pars.kernel[j][i];
+            }
+        }
+
+        for ( j = 0; j <= 2; ++j )
+            for ( i = 0; i <= 2; ++i )
+                Pars.kernel[j][i] /= tot;
+
+        for ( j = 0; j <= 2; ++j )
+            for ( i = 0; i <= 2; ++i )
+                   Pars.weighted_kernel[j][i] += (Pars.kernel[j][i] * weight);
+
+} /* Compute_wfc3_kernel */
 
 /*--------------------------------------------------------------------------
 * Convolve_kernel :
@@ -231,7 +304,7 @@ void Convolve_kernel( float kernel1[3][3], float kernel2[3][3] )
 	
 /*--------------------------------------------------------------------------
 * Read_psf :
-*	Read the ACS subsampled PSF produced by tiny2 from a FITS file.
+*	Read the ACS or WFC3 subsampled PSF produced by tiny2 from a FITS file.
 * Inputs :
 *	position : Position index of PSF (0 is first)
 * Outputs :
@@ -303,7 +376,7 @@ float **Read_scene( int *nx, int *ny )
 *	Resample the input scene, convolve it with the PSF, and map it to a
 *	distorted grid.
 * Inputs :
-*	scene : Input ACS scene
+*	scene : Input scene
 *	scene_nx, scene_ny : When called, contains the dimensions of the input scene
 *	psf_in : PSF produced by tiny2
 * Outputs :
@@ -589,7 +662,7 @@ complex **Copy_to_center( float **image, int nx, int ny, int dim_out )
 
 /*--------------------------------------------------------------------------------
 * Read_optional_parameters :
-*	Read the optional ACS scene parameter file.
+*	Read the optional scene parameter file.
 *-------------------------------------------------------------------------------*/
 void Read_optional_parameters( void )
 {
@@ -603,11 +676,11 @@ void Read_optional_parameters( void )
 	Pars.scene_y_center = -1;
 	strcpy( Pars.scene_output_file, "no_file" );
 
-	file = fopen( Pars.acs_param_file, "r" );
+	file = fopen( Pars.tt3_param_file, "r" );
 	if ( file == NULL )
 	{
 		printf( "  Optional parameter file %s not found or cannot open.\n",
-			Pars.acs_param_file );
+			Pars.tt3_param_file );
 		exit(0);
 	}
 
@@ -670,6 +743,16 @@ void Read_optional_parameters( void )
 		xmax = 1023;
 		ymax = 1023;
 	}
+        else if ( Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 )
+        {
+                xmax = 4095;
+                ymax = 2050;
+        }
+        else if ( Pars.chip == WFC3_IR )
+        {
+                xmax = 1013;
+                ymax = 1013;
+        }
 	else
 	{
 		xmax = 4095;
@@ -744,4 +827,3 @@ void Add_psfs( float **psf, float **image, int nx, int ny )
 	}
 
 } /* Add_psfs */
- 	

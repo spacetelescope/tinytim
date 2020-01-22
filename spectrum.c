@@ -82,7 +82,8 @@ static void Interpol( float *lambda, float *photlam, int npoints )
 		else
 			j1 = j2 - 1;
 		slope = (photlam[j2]-photlam[j1]) / (lambda[j2]-lambda[j1]);
-		yint = photlam[j2] - slope * lambda[j2];
+		yint = photlam[j2] - slope * lambda[j2]; 
+                printf("interpol: slope=%f, wavelength=%f, yint=%f",slope,Pars.wavelength[i],yint);
 		Pars.weight[i] *= (slope * Pars.wavelength[i] + yint);
 	}
 
@@ -92,13 +93,15 @@ static void Interpol( float *lambda, float *photlam, int npoints )
 static void Blackbody( void )
 {
 	int   i;
-	float dlambda, flux, h, c, k, t, w;
+	double dlambda, flux, h, c, k, w, t, factor, exponent;
+        int   useapproximation    = 0; 
+        double const maxexpfactor = 50.0;
 
 	t = 0.0;
 	while ( t < 100.0 || t > 90000.0 )
 	{	
-		printf("\nEnter temperature (Kelvin) : ");
-		scanf("%f", &t);
+		printf("\nEnter temperature (Kelvin) : ");                
+		scanf("%lf", &t);
 		if ( t < 100.0 || t > 90000.0 )
 			printf("** Temperature must be 100 - 90000 K **\n"); 
 	}
@@ -107,10 +110,36 @@ static void Blackbody( void )
 	c = 3.0e10;
 	k = 1.38e-16;
 
-	for ( i = 0; i < Pars.num_waves; ++i )
+        factor = 1.0; 
+
+	for ( i = Pars.num_waves-1; i >=0; --i )
 	{
-		w = Pars.wavelength[i] * 1.0e-4;  /* convert um to cm */
-		flux = 1.0 / (pow(w,4.0) * (exp((h*c)/(w*k*t))-1.0));
+		w = (double) Pars.wavelength[i] * 1.0e-4;  /* convert um to cm */
+                
+                /* checking the size of the exponent before to avoid floating point overflows */
+                exponent = (h*c)/(w*k*t);
+                
+                if ((i==(Pars.num_waves-1)) && (exponent > maxexpfactor)) {
+                      /* the exponent is too large to be computed directly. We can neglect the -1 and
+                      compute the log of the function. We do normalize all subsequent fluxes to 
+                      that of the first (largest) wave. */
+                      factor = exponent;
+                      useapproximation = 1;
+                }
+
+                if (useapproximation==1) {   
+                   if ((-exponent + factor)< - maxexpfactor) {
+                      /* the weight of this wavelength bin will be much smaller than
+                      the precision of the averaging sum is anyway. In order to avoid
+                      overflows, this flux can safely be set to 0.0, especially as
+                      Pars.weight is float anyway.*/
+                      flux = 0.0;
+                   } else {
+                      flux = exp(-log(pow(w,4.0)) - exponent + factor);
+                   }
+                } else {
+		   flux = 1.0 / (pow(w,4.0) * (exp(exponent)-1.0));
+                }   
 
 		/* flux is now in phot/cm^2/s/A with arbitrary normalization */
 
@@ -122,8 +151,9 @@ static void Blackbody( void )
 				       Pars.wavelength[i-1]);
 		else
 		  	dlambda = fabs((Pars.wavelength[i-1] - 
-				        Pars.wavelength[i+1])/2.0 );
-		Pars.weight[i] *= flux * dlambda;
+				        Pars.wavelength[i+1])/2.0 );          
+                                              
+		Pars.weight[i] = (float)((double)Pars.weight[i] * flux * dlambda);                
 	}
 
 	sprintf( Pars.spectrum_file, "Blackbody(%fK)", t );
@@ -442,7 +472,7 @@ static void Extinction( void )
 void Get_spectrum( void )
 {
 	int choice, i;
-	float tot;
+	double tot;
 
 	choice = 0;
 	while ( choice < 1 || choice > 5 )
@@ -488,9 +518,9 @@ void Get_spectrum( void )
 
 	tot = 0.0;
 	for ( i = 0; i < Pars.num_waves; ++i )
-		tot = tot + Pars.weight[i];
+		tot = tot + (double) Pars.weight[i];
 	for ( i = 0; i < Pars.num_waves; ++i )
-		Pars.weight[i] /= tot;
+		Pars.weight[i] /= (float) tot;
 
 } /* Get_spectrum */
 

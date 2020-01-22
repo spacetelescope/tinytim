@@ -6,16 +6,20 @@
  *	Read_wfpc2_data    : Read WFPC2 pupil data
  *	Read_foc_data      : Read FOC pupil data
  *	Read_nicmos_data   : Read NICMOS pupil data
- *	Read_acs_data	 : Read ACS pupil data
- *	Read_stis_data	 : Read STIS pupil data
+ *      Read_wfc3uvis_data : Read WFC3 UVIS data
+ *      Read_wfc3ir_data   : Read WFC3 IR data
+ *	Read_acs_data	   : Read ACS pupil data
+ *	Read_stis_data     : Read STIS pupil data
  *      Open_pupil_table   : Open a pupil table file for a specified camera
  *	Read_pupil_data    : Read pupil data for a specified camera
  * 	Read_pupil_table   : Open and read a pupil table for a specified camera
+ *      Read_geom_data     : Read geometric information (aperture position, and geometric distortion) for a specified camera
  *
  * Author    : John Krist (STScI)
  * Date      : May 1993
  *
  * Modifications :
+ *
  *	March 1994 - JEK
  *	  Modified Read_wfpc2_data to read in x and y focus slopes.
  *
@@ -39,6 +43,10 @@
  *    
  *      January 2003 - JEK
  *        Added new NICMOS+cryocooler
+ *
+ *      March 2008 - RNH & FS
+ *        Added WFC3 support - and moved distortion reading to a separate routine
+ *
  */
 
 #include <stdio.h>
@@ -307,6 +315,8 @@ static void Read_nicmos_data( FILE *file, int camera, int nicmos_type )
 /*---------------------------------------------------------------------------*/
 static void Read_wfc3ir_data( FILE *file )
 {
+        int i,j;
+
 	/* Read WFC3 IR channel wavelength range */
 
 	sscanf( Get_entry( file ), "%f %f",
@@ -333,43 +343,114 @@ static void Read_wfc3ir_data( FILE *file )
 
         sscanf( Get_entry( file ), "%f %f", &Pars.v2, &Pars.v3);
 
-	/* read v2,v3 coordinates of pads */
+        /* Read field dependent aberration coefficients.  Aberrations are, *
+         * in order: focus, x & y astigmatism, x & y coma                  */
 
-       	sscanf( Get_entry( file ), "%f %f %f", 
-               	&Pars.wfc3_pad_v2[0],
-               	&Pars.wfc3_pad_v2[1],
-               	&Pars.wfc3_pad_v2[2]);
+        for ( i = 0; i < 5; ++i )
+            for ( j = 0; j < 6; ++j )
+                sscanf( Get_entry( file ), "%f %f %f %f %f %f",
+                        &Pars.wfc3_aber[i][j][0],
+                        &Pars.wfc3_aber[i][j][1],
+                        &Pars.wfc3_aber[i][j][2],
+                        &Pars.wfc3_aber[i][j][3],
+                        &Pars.wfc3_aber[i][j][4],
+                        &Pars.wfc3_aber[i][j][5] );
 
-       	sscanf( Get_entry( file ), "%f %f %f", 
-               	&Pars.wfc3_pad_v3[0],
-               	&Pars.wfc3_pad_v3[1],
-               	&Pars.wfc3_pad_v3[2]);
+        /* read geometric information - position of apertures and distortion coefficients */
+        Read_geom_data( file);
 
-	/* read x,y sizes of pads, as proportions of the pupil radius */
+        /* Read the charge diffusion kernels, and their spatial variation */
+        for ( i = 0; i < NUM_WFC3_KERNELS; ++i )
+        {
+                sscanf( Get_entry( file ), "%f",
+                        &Pars.wfc3_kernel_wavelength[i] );
 
-       	sscanf( Get_entry( file ), "%f %f %f", 
-               	&Pars.wfc3_pad_x[0],
-               	&Pars.wfc3_pad_x[1],
-               	&Pars.wfc3_pad_x[2]);
+                for ( j = 0; j < 3; ++j )
+                        sscanf( Get_entry( file ), "%f %f %f",
+                                &Pars.wfc3_kernel[i][j][0],
+                                &Pars.wfc3_kernel[i][j][1],
+                                &Pars.wfc3_kernel[i][j][2]);
+        }
 
-       	sscanf( Get_entry( file ), "%f %f %f", 
-               	&Pars.wfc3_pad_y[0],
-               	&Pars.wfc3_pad_y[1],
-               	&Pars.wfc3_pad_y[2]);
+        sscanf( Get_entry(file), "%d", &Pars.blur_xy_num_wavelengths );
 
-	/* read rotations of pads */
+        for ( i = 0; i < Pars.blur_xy_num_wavelengths; ++i )
+        {
+                sscanf( Get_entry(file), "%f", &Pars.blur_xy_wavelength[i] );
 
-       	sscanf( Get_entry( file ), "%f %f %f", 
-               	&Pars.wfc3_pad_rot[0],
-               	&Pars.wfc3_pad_rot[1],
-               	&Pars.wfc3_pad_rot[2]);
+                for ( j = 0; j <= 5; ++j )
+                        sscanf( Get_entry(file), "%f %f %f %f %f %f",
+                                &Pars.blur_xy_sigma[i][j][0], &Pars.blur_xy_sigma[i][j][1],
+                                &Pars.blur_xy_sigma[i][j][2], &Pars.blur_xy_sigma[i][j][3],
+                                &Pars.blur_xy_sigma[i][j][4], &Pars.blur_xy_sigma[i][j][5] );
+
+        }
 
 } /* Read_wfc3ir_data */
 
 /*----------------------------------------------------------------------------*/
-static void Read_wfc3vis_data( FILE *file )
+static void Read_wfc3uvis_data( FILE *file )
 {
-}
+        int     i, j;
+
+        /* Read wavelength range in nm */
+
+        sscanf( Get_entry( file ), "%f %f",
+                &Pars.min_wavelength, &Pars.max_wavelength );
+
+        /* Read camera rotation (relative to OTA) */
+
+        sscanf( Get_entry( file ), "%f", &Pars.theta );
+
+        /* Read pixel size */
+
+        sscanf( Get_entry( file ), "%f", &Pars.pixel_size );
+
+        /* Read field dependent aberration coefficients.  Aberrations are, *
+         * in order: focus, x & y astigmatism, x & y coma                  */
+
+        for ( i = 0; i < 5; ++i )
+            for ( j = 0; j < 6; ++j )
+                sscanf( Get_entry( file ), "%f %f %f %f %f %f",
+                        &Pars.wfc3_aber[i][j][0],
+                        &Pars.wfc3_aber[i][j][1],
+                        &Pars.wfc3_aber[i][j][2],
+                        &Pars.wfc3_aber[i][j][3],
+                        &Pars.wfc3_aber[i][j][4],
+                        &Pars.wfc3_aber[i][j][5] );
+
+        /* Read geometric information - position of apertures and distortion coefficients */
+        Read_geom_data( file );
+
+        /* Read the charge diffusion kernels, and their spatial variation */
+        for ( i = 0; i < NUM_WFC3_KERNELS; ++i )
+        {
+                sscanf( Get_entry( file ), "%f",
+                        &Pars.wfc3_kernel_wavelength[i] );
+
+                for ( j = 0; j < 3; ++j )
+                        sscanf( Get_entry( file ), "%f %f %f",
+                                &Pars.wfc3_kernel[i][j][0],
+                                &Pars.wfc3_kernel[i][j][1],
+                                &Pars.wfc3_kernel[i][j][2]);
+        }
+
+        sscanf( Get_entry(file), "%d", &Pars.blur_xy_num_wavelengths );
+
+        for ( i = 0; i < Pars.blur_xy_num_wavelengths; ++i )
+        {
+                sscanf( Get_entry(file), "%f", &Pars.blur_xy_wavelength[i] );
+
+                for ( j = 0; j <= 5; ++j )
+                        sscanf( Get_entry(file), "%f %f %f %f %f %f",
+                                &Pars.blur_xy_sigma[i][j][0], &Pars.blur_xy_sigma[i][j][1],
+                                &Pars.blur_xy_sigma[i][j][2], &Pars.blur_xy_sigma[i][j][3],
+                                &Pars.blur_xy_sigma[i][j][4], &Pars.blur_xy_sigma[i][j][5] );
+
+        }
+
+
+} /* Read_wfc3uvis_data */
 
 /*----------------------------------------------------------------------------*/
 static void Read_acs_data( FILE *file, int camera )
@@ -411,54 +492,8 @@ static void Read_acs_data( FILE *file, int camera )
 			&Pars.acs_aber[i][j][4],
 			&Pars.acs_aber[i][j][5] );
 
-	/* Read ACS axial offsets for reference position */
-
-	sscanf( Get_entry( file ), "%f %f", &Pars.v2, &Pars.v3 );
-
-	/* Read ACS detector pixel reference positions */
-
-	sscanf( Get_entry( file ), "%f %f", &Pars.x_ref, &Pars.y_ref );
-
-	/* Read	V2,V3 pupil coordinates of camera (not detector) center */
-
-	sscanf( Get_entry( file ), "%f %f", &Pars.v2c, &Pars.v3c );
-
-	/* Read field X,Y to v2,v3 transform coefficients;  NOTE: these *
-         * coefficients are relative to the camera optical axis         */
-
-	sscanf( Get_entry(file), "%f %f", &Pars.xy_to_xc[0], &Pars.xy_to_xc[1] );
-	sscanf( Get_entry(file), "%f %f %f", 
-		&Pars.xy_to_xc[2], &Pars.xy_to_xc[3], &Pars.xy_to_xc[4] );
-	sscanf( Get_entry(file), "%f %f %f %f", 
-		&Pars.xy_to_xc[5], &Pars.xy_to_xc[6], &Pars.xy_to_xc[7], &Pars.xy_to_xc[8] );
-	sscanf( Get_entry(file), "%f %f %f %f %f", 
-		&Pars.xy_to_xc[9], &Pars.xy_to_xc[10], &Pars.xy_to_xc[11], &Pars.xy_to_xc[12], &Pars.xy_to_xc[13] );
-
-	sscanf( Get_entry(file), "%f %f", &Pars.xy_to_yc[0], &Pars.xy_to_yc[1] );
-	sscanf( Get_entry(file), "%f %f %f", 
-		&Pars.xy_to_yc[2], &Pars.xy_to_yc[3], &Pars.xy_to_yc[4] );
-	sscanf( Get_entry(file), "%f %f %f %f", 
-		&Pars.xy_to_yc[5], &Pars.xy_to_yc[6], &Pars.xy_to_yc[7], &Pars.xy_to_yc[8] );
-	sscanf( Get_entry(file), "%f %f %f %f %f", 
-		&Pars.xy_to_yc[9], &Pars.xy_to_yc[10], &Pars.xy_to_yc[11], &Pars.xy_to_yc[12], &Pars.xy_to_yc[13] );
-
-	/* Read v2,v3 to field X,Y transform coefficients */
-
-	sscanf( Get_entry(file), "%f %f", &Pars.xcyc_to_x[0], &Pars.xcyc_to_x[1] );
-	sscanf( Get_entry(file), "%f %f %f", 
-		&Pars.xcyc_to_x[2], &Pars.xcyc_to_x[3], &Pars.xcyc_to_x[4] );
-	sscanf( Get_entry(file), "%f %f %f %f", 
-		&Pars.xcyc_to_x[5], &Pars.xcyc_to_x[6], &Pars.xcyc_to_x[7], &Pars.xcyc_to_x[8] );
-	sscanf( Get_entry(file), "%f %f %f %f %f", 
-		&Pars.xcyc_to_x[9], &Pars.xcyc_to_x[10], &Pars.xcyc_to_x[11], &Pars.xcyc_to_x[12], &Pars.xcyc_to_x[13] );
-
-	sscanf( Get_entry(file), "%f %f", &Pars.xcyc_to_y[0], &Pars.xcyc_to_y[1] );
-	sscanf( Get_entry(file), "%f %f %f", 
-		&Pars.xcyc_to_y[2], &Pars.xcyc_to_y[3], &Pars.xcyc_to_y[4] );
-	sscanf( Get_entry(file), "%f %f %f %f", 
-		&Pars.xcyc_to_y[5], &Pars.xcyc_to_y[6], &Pars.xcyc_to_y[7], &Pars.xcyc_to_y[8] );
-	sscanf( Get_entry(file), "%f %f %f %f %f", 
-		&Pars.xcyc_to_y[9], &Pars.xcyc_to_y[10], &Pars.xcyc_to_y[11], &Pars.xcyc_to_y[12], &Pars.xcyc_to_y[13] );
+        /* Read the geometric information */
+        Read_geom_data( file );
 
 	/* Read CCD pixel scattering kernels */
 
@@ -616,7 +651,10 @@ static FILE *Open_pupil_table( int camera, char *table_name )
 		     case STIS_FUV : Default_dir( "stisfuv.pup", table_name );
 				     break;
 
-		     case WFC3_VIS : Default_dir( "wfc3_vis.pup", table_name );
+		   case WFC3_UVIS1 : Default_dir( "wfc3_uvis1.pup", table_name );
+				     break;
+
+		   case WFC3_UVIS2 : Default_dir( "wfc3_uvis2.pup", table_name );
 				     break;
 
 		     case WFC3_IR :  Default_dir( "wfc3_ir.pup", table_name );
@@ -680,7 +718,8 @@ void Read_pupil_data( int camera, FILE *file )
 		     case STIS_FUV : Read_stis_data( file, camera );
 				     break;
 
-		     case WFC3_VIS : Read_wfc3vis_data( file );
+	           case WFC3_UVIS1 : 
+                   case WFC3_UVIS2 : Read_wfc3uvis_data( file );
 				     break;
 
 		     case WFC3_IR  : Read_wfc3ir_data( file );
@@ -704,3 +743,58 @@ void Read_pupil_table( int camera, char *table_name )
 	fclose( file );
 
 } /* Read_pupil_table */
+
+/*----------------------------------------------------------------------------*/
+void Read_geom_data( FILE *file)
+{
+
+       /* Read axial offsets for reference position */
+
+        sscanf( Get_entry( file ), "%f %f", &Pars.v2, &Pars.v3 );
+        
+        /* Read detector pixel reference positions */
+        
+        sscanf( Get_entry( file ), "%f %f", &Pars.x_ref, &Pars.y_ref );
+                        
+        /* Read V2,V3 pupil coordinates of camera (not detector) center */
+
+        sscanf( Get_entry( file ), "%f %f", &Pars.v2c, &Pars.v3c );
+
+        /* Read field X,Y to v2,v3 transform coefficients;  NOTE: these *
+         * coefficients are relative to the camera optical axis         */
+
+        sscanf( Get_entry(file), "%f %f", &Pars.xy_to_xc[0], &Pars.xy_to_xc[1] );
+        sscanf( Get_entry(file), "%f %f %f",
+                &Pars.xy_to_xc[2], &Pars.xy_to_xc[3], &Pars.xy_to_xc[4] );
+        sscanf( Get_entry(file), "%f %f %f %f", 
+                &Pars.xy_to_xc[5], &Pars.xy_to_xc[6], &Pars.xy_to_xc[7], &Pars.xy_to_xc[8] );
+        sscanf( Get_entry(file), "%f %f %f %f %f",
+                &Pars.xy_to_xc[9], &Pars.xy_to_xc[10], &Pars.xy_to_xc[11], &Pars.xy_to_xc[12], &Pars.xy_to_xc[13] );
+        
+        sscanf( Get_entry(file), "%f %f", &Pars.xy_to_yc[0], &Pars.xy_to_yc[1] );
+        sscanf( Get_entry(file), "%f %f %f",
+                &Pars.xy_to_yc[2], &Pars.xy_to_yc[3], &Pars.xy_to_yc[4] );
+        sscanf( Get_entry(file), "%f %f %f %f",
+                &Pars.xy_to_yc[5], &Pars.xy_to_yc[6], &Pars.xy_to_yc[7], &Pars.xy_to_yc[8] );
+        sscanf( Get_entry(file), "%f %f %f %f %f",
+                &Pars.xy_to_yc[9], &Pars.xy_to_yc[10], &Pars.xy_to_yc[11], &Pars.xy_to_yc[12], &Pars.xy_to_yc[13] );
+
+        /* Read v2,v3 to field X,Y transform coefficients */
+
+        sscanf( Get_entry(file), "%f %f", &Pars.xcyc_to_x[0], &Pars.xcyc_to_x[1] );
+        sscanf( Get_entry(file), "%f %f %f",
+                &Pars.xcyc_to_x[2], &Pars.xcyc_to_x[3], &Pars.xcyc_to_x[4] );
+        sscanf( Get_entry(file), "%f %f %f %f",
+                &Pars.xcyc_to_x[5], &Pars.xcyc_to_x[6], &Pars.xcyc_to_x[7], &Pars.xcyc_to_x[8] );
+        sscanf( Get_entry(file), "%f %f %f %f %f",
+                &Pars.xcyc_to_x[9], &Pars.xcyc_to_x[10], &Pars.xcyc_to_x[11], &Pars.xcyc_to_x[12], &Pars.xcyc_to_x[13] );
+
+        sscanf( Get_entry(file), "%f %f", &Pars.xcyc_to_y[0], &Pars.xcyc_to_y[1] );
+        sscanf( Get_entry(file), "%f %f %f",
+                &Pars.xcyc_to_y[2], &Pars.xcyc_to_y[3], &Pars.xcyc_to_y[4] );
+        sscanf( Get_entry(file), "%f %f %f %f",
+                &Pars.xcyc_to_y[5], &Pars.xcyc_to_y[6], &Pars.xcyc_to_y[7], &Pars.xcyc_to_y[8] );
+        sscanf( Get_entry(file), "%f %f %f %f %f",
+                &Pars.xcyc_to_y[9], &Pars.xcyc_to_y[10], &Pars.xcyc_to_y[11], &Pars.xcyc_to_y[12], &Pars.xcyc_to_y[13] );
+
+} /* Read_geom_data */

@@ -90,9 +90,10 @@ static void fft( complex *image, int ntot, int n, int nspan, int isn )
 	float      aj, bj, akp, ajp, akm, bkp, bjp, bkm, c2, c3, s2, s3;
 	float      ajm, bjm, bb, aa, tt;    
 
+        c2 = c3 = s2 = s3 = 0.0;
+
 /* This program indexes everything according to Fortran notation (first array
  * element is index=1.  Decrement the data pointer so that this will work.  */
-
 	--image;
 
 /* the following two constants should agree with the array dimensions. */

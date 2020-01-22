@@ -90,6 +90,14 @@ void Write_params( char *param_file, struct DateStruct *obs_date )
 			fprintf( file, "1  #  Apply HRC red halo (0=no)\n" );
 	}
 
+        if ( Pars.chip >= WFC3_UVIS1 && Pars.chip <= WFC3_IR )
+        {
+                fprintf( file, "%d  #  Adjust for WFC3 field aberrations? (0=no)\n",
+                        Pars.adjust_for_xy );
+                fprintf( file, "%d  #  Apply WFC3 pixel scattering (0=no)\n",
+                        Pars.scatter_flag );
+        }
+
 	if ( Pars.chip >= NICMOS_1 && Pars.chip <= NICMOS_3 )
 	{
 		fprintf( file, "%f # PAM position of camera best focus (mm)\n",

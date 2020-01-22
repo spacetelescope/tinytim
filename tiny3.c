@@ -6,6 +6,8 @@
  *
  *  Author  :  John Krist
  *  Date    :  September 2000
+ *
+ *  Updated: Richard Hook & Felix Stoehr, March 2008
  */
 
 #include <stdio.h>
@@ -76,7 +78,7 @@ static void Tiny3_command_line( int argc, char *argv[], int *position, int *sub_
 			exit(0);
 		}
 		else
-			strcpy( Pars.acs_param_file, argv[i] ); 
+			strcpy( Pars.tt3_param_file, argv[i] ); 
 	}
 }
 
@@ -85,11 +87,16 @@ int main( int argc, char *argv[] )
 {
 	time_t  start_time, end_time;
 	int	i, dx, dy, position, scene_nx, scene_ny, scene_nx_out, scene_ny_out;
-	int	mib[2], numproc;
-	float	**psf_in, **psf_out, **scene_in, **convolved_scene, **scene_out, dist, min_dist;
+	float	**psf_in, **psf_out, **scene_in, **convolved_scene, **scene_out, dist, min_dist=1e10;
 	float	cscale, sigma, x_scale, y_scale;
 	char	name[MAX_STRING];
+                
+#ifdef TT_THREADED
+#ifdef MACOSX
+        int	mib[2], numproc;
 	size_t  len;
+#endif
+#endif
 
 	printf("Tiny Tim v%3.1f", (float)VERSION_NUM);
 
@@ -116,18 +123,18 @@ int main( int argc, char *argv[] )
 
 	Read_params( argv[1] );  /* Read parameter file */
 
-	if ( Pars.chip < ACS_WFC1 || Pars.chip > ACS_SBC )
+	if ( Pars.chip < ACS_WFC1 || Pars.chip > WFC3_IR )
 	{
-		printf( "*** ERROR : Tiny3 only works on ACS PSFs ***\n" );
+		printf( "*** ERROR : Tiny3 currently only works on ACS & WFC3 PSFs ***\n" );
 		exit(0);
 	}
 
-	Pars.acs_param_file[0] = '\0';
+	Pars.tt3_param_file[0] = '\0';
 	Pars.undistorted_scale = 0.0;
 	Tiny3_command_line( argc, argv, &position, &Pars.sub_factor, &Pars.undistorted_scale );
 
 	strcpy( Pars.scene_input_file, "no_file" );
-	if ( Pars.acs_param_file[0] != '\0' )
+	if ( Pars.tt3_param_file[0] != '\0' )
 		Read_optional_parameters();
 
 
@@ -143,23 +150,48 @@ int main( int argc, char *argv[] )
 		y_scale = 0.0301;
 		cscale = 1.20;
 	}
-	else
+        else if ( Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 )
+        {
+                x_scale = 0.040;
+                y_scale = 0.040;
+                cscale = 1.20;
+        }
+        else if ( Pars.chip == WFC3_IR )
+        {
+                x_scale = 0.13;
+                y_scale = 0.13;
+                cscale = 1.20;
+        }
+	else if (Pars.chip == ACS_WFC1 || Pars.chip == ACS_WFC2 )
 	{
 		x_scale = 0.0495;
 		y_scale = 0.0495;
 		cscale = 1.20;
 	}
+        else 
+        {
+                printf( "*** ERROR : Unknown chip/camera, tiny3 only works for ACS & WFC3 PSFs ***\n" );
+                exit(0);
+        }
 
 
 	time( &start_time );
 
 	Init_damped_interp();
 
-  	for ( i = 0; i < Pars.num_waves; ++i )
-  		Compute_acs_kernel( Pars.wavelength[i], Pars.weight[i] );
+        /* Compute the scattering convolution kernel */
+        if ( Pars.scatter_flag ) 
+        {
+               if ( Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 || Pars.chip == WFC3_IR ) 
+                        for ( i = 0; i < Pars.num_waves; ++i )
+          		        Compute_wfc3_kernel( Pars.wavelength[i], Pars.weight[i] );
+               else 
+                        for ( i = 0; i < Pars.num_waves; ++i )
+                                Compute_acs_kernel( Pars.wavelength[i], Pars.weight[i] );
+         }
 
-	if ( strcmp(Pars.scene_input_file, "no_file") == 0 )
-	{
+ 	if ( strcmp(Pars.scene_input_file, "no_file") == 0 )
+ 	{
 		/* process PSF only; there is no input scene to deal with */
 
 		Pars.pixel_size = Pars.pixel_size / Pars.sub_factor;
@@ -171,8 +203,9 @@ int main( int argc, char *argv[] )
 		printf("Processing PSF for position %d/%d : (x,y) = %d %d\n",
 			position+1, Pars.num_pos, Pars.x[position], Pars.y[position] );
 
-		if ( Pars.chip == ACS_WFC1 || Pars.chip == ACS_WFC2 || Pars.chip == ACS_HRC || Pars.chip == ACS_HRC_OFFSPOT )
-			sigma = Compute_acs_kernel_xy( Pars.x[position], Pars.y[position], Pars.wavelength[0] );
+ 		if ( Pars.chip == ACS_WFC1 || Pars.chip == ACS_WFC2 || Pars.chip == ACS_HRC || Pars.chip == ACS_HRC_OFFSPOT || 
+                     Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 || Pars.chip == WFC3_IR )
+			sigma = Compute_kernel_xy( Pars.x[position], Pars.y[position], Pars.wavelength[0] );
 
 		psf_in = Read_psf( position );
 
@@ -265,9 +298,11 @@ int main( int argc, char *argv[] )
 			}
 		}
 
-		if ( Pars.chip == ACS_WFC1 || Pars.chip == ACS_WFC2 || Pars.chip == ACS_HRC || Pars.chip == ACS_HRC_OFFSPOT )
+		if ( Pars.chip == ACS_WFC1 || Pars.chip == ACS_WFC2 || Pars.chip == ACS_HRC || Pars.chip == ACS_HRC_OFFSPOT ||
+                     Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 || Pars.chip == WFC3_IR )
+       
 		{
-			sigma = Compute_acs_kernel_xy( Pars.x[position], Pars.y[position], Pars.wavelength[0] );
+			sigma = Compute_kernel_xy( Pars.x[position], Pars.y[position], Pars.wavelength[0] );
 			Convolve_kernel( Pars.weighted_kernel, Pars.kernel_xy );
 		}
 

@@ -1,4 +1,4 @@
-#define  VERSION_NUM  6.3
+#define  VERSION_NUM  7.0
 
 /* 1-8 = WF/PC-1 */
 #define  FOC_F48      9
@@ -20,11 +20,12 @@
 #define  ACS_HRC     25
 #define  ACS_HRC_OFFSPOT     26
 #define  ACS_SBC     27
-#define  WFC3_VIS    28
-#define  WFC3_IR     29
-#define  NEWNICMOS_1 30
-#define  NEWNICMOS_2 31
-#define  NEWNICMOS_3 32
+#define  WFC3_UVIS1    28
+#define  WFC3_UVIS2    29
+#define  WFC3_IR     30
+#define  NEWNICMOS_1 31
+#define  NEWNICMOS_2 32
+#define  NEWNICMOS_3 33
 
 #define  M_PI  3.14159265358979323846
 #define  DIAM_HST_MICRONS    2.4e6
@@ -34,6 +35,7 @@
 #define  LASTZERNIKE    22
 #define  MAX_INSTR      30
 #define  NUM_ACS_KERNELS 3
+#define  NUM_WFC3_KERNELS 2
 #define  MAX_STRING  550
 #define  MAX_PSFS       1000
 
@@ -112,9 +114,12 @@ struct paramstruct {
                 wfc3_pad_v3[3],
                 wfc3_pad_x[3],
                 wfc3_pad_y[3],
-                wfc3_pad_rot[3];
+                wfc3_pad_rot[3],
+                wfc3_aber[5][6][6],
+		wfc3_kernel_wavelength[NUM_ACS_KERNELS],
+		wfc3_kernel[NUM_ACS_KERNELS][3][3];
 
-	char	acs_param_file[MAX_STRING], scene_input_file[MAX_STRING], 
+	char	tt3_param_file[MAX_STRING], scene_input_file[MAX_STRING], 
 		scene_output_file[MAX_STRING], scene_psf_file[MAX_STRING];
 	float	scene_pixel_scale, scene_psf_x[MAX_PSFS], scene_psf_y[MAX_PSFS],
 		scene_psf_flux[MAX_PSFS];
@@ -164,8 +169,9 @@ typedef struct Complex { float r, i; } complex;
 #define  STSDAS_FILE    1
 
 /* acs.c */
-float Compute_acs_kernel_xy( int xdet, int ydet, float lambda );
+float Compute_kernel_xy( int xdet, int ydet, float lambda );
 void Compute_acs_kernel( float wavelength, float weight );
+void Compute_wfc3_kernel( float wavelength, float weight );
 void Convolve_kernel( float kernel1[3][3], float kernel2[3][3] );
 float **Read_psf( int position );
 float **Read_scene( int *nx, int *ny );
@@ -303,6 +309,7 @@ void Dark_rot_rect( float **image, int nx, int ny, float xc, float yc,
 /* rdpupil.c */
 void Read_pupil_data( int camera, FILE *file );
 void Read_pupil_table( int camera, char *table_name );
+void Read_geom_data( FILE *file );
 
 /* rotate.c */
 float **Rotate_image( float **image, int nx, int ny, 

@@ -8,6 +8,7 @@
  * Date     :  January 1992
  *
  * Modifications :
+ *
  *	J. Krist - March 1992
  *	   Got rid of limit of 6.0 arcseconds for integrated PSF diameter.
  *	   Changed parameters for ComputeGridDims.
@@ -56,6 +57,9 @@
  *
  *      J. Krist - Sept 2000
  *	   Altered ACS, STIS inputs; added WFC3
+ *
+ *      R. Hook & F. Stoehr - March 2008
+ *         Added WFC3 support
  */
 
 #include <stdio.h>
@@ -208,7 +212,7 @@ int main( argc, argv )
 {
 	struct  DateStruct obs_date;
 	int     i, camera, oversampling_factor, new_dim;
-	int	is_wfpc1, is_wfpc2, is_acs, is_nicmos; 
+	int	is_wfpc1, is_wfpc2, is_acs, is_nicmos, is_wfc3;
 	char    position_file[MAX_STRING], yes_no[5];
         char    paramfile[MAX_STRING];
         char    manualfile[MAX_STRING];
@@ -218,6 +222,7 @@ int main( argc, argv )
 	is_wfpc2 = 0;
 	is_nicmos = 0;
 	is_acs = 0;
+        is_wfc3 = 0;
 
 	Process_command_line( argc, argv, paramfile );
 	Default_dir( "tinytim.pdf", manualfile );
@@ -226,9 +231,9 @@ int main( argc, argv )
 	printf("      ------ Tiny Tim v%3.1f : The HST PSF Generator ------\n",
 		(float)VERSION_NUM);
 	printf("\n");
-	printf("                Release Date : June 15, 2004\n");
+	printf("                Release Date : June 1, 2008\n");
 	printf("                   Developed by John Krist\n");
-	printf("             Additional support by Richard Hook\n");
+	printf("             Additional support by Richard Hook & Felix Stoehr\n");
 	printf("        >> Manual in %s <<\n", manualfile);
 	printf("        ** http://www.stsci.edu/software/tinytim **\n");
 
@@ -240,7 +245,7 @@ int main( argc, argv )
 	  printf("2) Planetary Camera  (WFPC1)             6) WFPC2 - Planetary Camera \n");
 	  printf("3) FOC f/48                              7) COSTAR-corrected FOC f/48 \n");
 	  printf("4) FOC f/96                              8) COSTAR-corrected FOC f/96 \n");
-	  printf("\n---- Second Generation ----            -------- Third Generation ---------\n");
+	  printf("\n--------- Second Generation ---------  -------- Third Generation ---------\n");
 	  printf(" 9) NICMOS Camera 1 (pre-cryocooler)    15) ACS - Wide Field Channel \n");
 	  printf("10) NICMOS Camera 2 (pre-cryocooler)    16) ACS - High Resolution Channel \n");
 	  printf("11) NICMOS Camera 3 (pre-cryocooler)    17) ACS - HRC coronagraph off-spot PSF\n");
@@ -248,6 +253,9 @@ int main( argc, argv )
 	  printf("13) STIS NUV-MAMA                       19) NICMOS Camera 1 + cryocooler \n");
 	  printf("14) STIS FUV-MAMA                       20) NICMOS Camera 2 + cryocooler \n");
 	  printf("                                        21) NICMOS Camera 3 + cryocooler \n");
+	  printf("--------- Fourth Generation --------- \n");
+	  printf("22) WFC3 UVIS channel\n");
+	  printf("23) WFC3 IR channel\n");
 	  printf("\nChoice : ");
 	  scanf("%d", &camera);
 	}
@@ -375,21 +383,39 @@ int main( argc, argv )
 			 is_nicmos = 1;
                          break;
 
-		case 22 : Pars.chip = WFC3_VIS;
-			 sprintf( Pars.camera_name, "WFC3_VIS" );
-			 break;
+		case 22 : while ( Pars.chip < 1 || Pars.chip > 2 )
+                         {
+                                printf("\nEnter detector (1 or 2) : ");
+                                scanf("%d", &Pars.chip );
+                         }
+                         if ( Pars.chip == 1 )
+                         {
+                                sprintf( Pars.camera_name, "WFC3_UVIS1" );
+                                Pars.chip = WFC3_UVIS1;
+                         }
+                         else
+                         {
+                                sprintf( Pars.camera_name, "WFC3_UVIS2" );
+                                Pars.chip = WFC3_UVIS2;
+                         }
+                         is_wfc3 = 1;
+                         break;
+
 		case 23 : Pars.chip = WFC3_IR;
 			 sprintf( Pars.camera_name, "WFC3_IR" );
+                         is_wfc3 = 1;
 			 break;
 	}
 
-	/* If camera is WFPC, WFPC2, NICMOS, ACS, or STIS CCD get the  *
+	/* If camera is WFPC, WFPC2, NICMOS, ACS, WFC3 or STIS CCD get the  *
 	 * detector position at which to simulate the PSF.  A file     *
 	 * containing x,y pairs can be named instead by prefixing the  *
 	 * filename with a @.  If FOC, it is set to be at the center   *
 	 * of the detector (256,256).       			       */
 
-	if ( is_wfpc1 || is_wfpc2 || is_nicmos || is_acs ) 
+
+/*        printf("%d %d %d %d %d",is_wfpc1, is_wfpc2,is_nicmos, is_acs ,is_wfc3) ;*/
+	if ( is_wfpc1 || is_wfpc2 || is_nicmos || is_acs || is_wfc3 ) 
 	{
 	       	printf("\nEnter position (x and y) on detector in INTEGER\n");
 
@@ -406,6 +432,15 @@ int main( argc, argv )
 		{
 			printf("pixels (range = 0 to 1023) or the filename of a list\n" );
 		}
+                else if ( Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 )
+                {
+                        printf("pixels (X range = 0-4095, Y range = 0-2050)\n");
+                        printf("or the filename of a list ");
+                }
+                else if ( Pars.chip == WFC3_IR )
+                {
+                        printf("pixels (range = 0 to 1013) or the filename of a list\n" );
+                }
 		else
 			printf("pixels (range = 0 to 1023) or the filename of a list\n" );
 
@@ -553,12 +588,12 @@ int main( argc, argv )
 	else
 		strcpy( Pars.spectrum_file, "No spectrum" );
 
-	/* If an ACS camera, tiny2 will compute a PSF that has a       *
+	/* If an ACS or WFC3 camera, tiny2 will compute a PSF that has a       *
 	 * sampling of the Nyquist sampling of the shortest wavelength *
 	 * in the specified filter passband, divided by 1.3.  Tiny3    *
 	 * will resample this onto distorted ACS pixels.	       */
  
-	if ( is_acs )
+	if ( is_acs || is_wfc3 )
 		Pars.pixel_size = Pars.wavelength[0] * 360.0 * 3600.0 /
 					(4 * M_PI * DIAM_HST_MICRONS) / 1.3;
 
@@ -567,11 +602,11 @@ int main( argc, argv )
 	Compute_grid_dims( &Pars.psf_size, Pars.chip, Pars.num_waves, 
 		Pars.wavelength, Pars.crit_dim, &Pars.int_dim );
 
-	/* Get the sampling factor (if not ACS) */
+	/* Get the sampling factor (if not ACS or WFC3) */
 
 	oversampling_factor = 1;
 
-	if ( !is_acs )
+	if ( !is_acs && !is_wfc3 )
 	{
 		printf("\nDo you wish to generate a subsampled PSF? (Y/N) : ");
 		scanf("%s", yes_no );
@@ -608,7 +643,7 @@ int main( argc, argv )
 
 	/* by default, compute field dependent aberrations */
 
-	if ( is_wfpc2 || is_acs )
+	if ( is_wfpc2 || is_acs || is_wfc3 )
 		Pars.adjust_for_xy = 1; 
 
 	/* if NICMOS, set flags so that aberrations are computed based  *
@@ -620,7 +655,7 @@ int main( argc, argv )
 		Pars.adjust_for_xy = 1;
 	}
 
-	if ( Pars.int_dim > 500 && !is_acs )
+	if ( Pars.int_dim > 500 && !is_acs && !is_wfc3 )
 	{
 		printf("\nThe integrated PSF dimensions are %d by %d, which\n",
 			Pars.int_dim, Pars.int_dim );

@@ -89,7 +89,8 @@ static void Read_param_data( FILE *file )
 
 	Pars.adjust_for_xy = 0;
 	if ( (Pars.chip >= WFPC2_PC && Pars.chip <= WFPC2_WFC_4) || 
-	     (Pars.chip >= ACS_WFC1 && Pars.chip <= ACS_SBC))
+	     (Pars.chip >= ACS_WFC1 && Pars.chip <= ACS_SBC) ||
+             (Pars.chip >= WFC3_UVIS1 && Pars.chip <= WFC3_IR) )
 	{
 		sscanf( Get_entry(file), "%d", &Pars.adjust_for_xy );
 	}
@@ -97,7 +98,8 @@ static void Read_param_data( FILE *file )
 	Pars.scatter_flag = 0;	
 	if ( (Pars.chip >= WFPC2_PC && Pars.chip <= WFPC2_WFC_4) || 
 	     Pars.chip == ACS_WFC1 || Pars.chip == ACS_WFC2 || Pars.chip == ACS_HRC ||
-	     Pars.chip == ACS_HRC_OFFSPOT || Pars.chip == STIS_CCD )
+	     Pars.chip == ACS_HRC_OFFSPOT || Pars.chip == STIS_CCD ||
+             Pars.chip == WFC3_UVIS1 || Pars.chip == WFC3_UVIS2 || Pars.chip == WFC3_IR )
 	{
 		sscanf( Get_entry(file), "%d", &Pars.scatter_flag );
 	}
