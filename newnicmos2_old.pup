@@ -1,0 +1,94 @@
+# Pupil Table :  newnicmos2_old.pup
+# Do not change the order of these entries!
+# Date : April 2003
+# Nicmos 2 camera information (cryocooler era before Sep 29, 2003)
+#----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+# NICMOS wavelength range
+#
+  700 2500  = min, max detector wavelength (nm)
+#
+# NICMOS cold mask obscuration parameters (rough estimates)
+#
+ 0.357  = NICMOS 2 Secondary radius
+ 0.072  = NICMOS 2 Spider width
+ 0.9768 = NICMOS 2 Outer radius of cold mask
+ 0.014  = NICMOS 2 cold mask rotation
+-0.323  = OTA aperture rotation
+ 0.032  0.100   = NICMOS cold mask V2,V3 pupil offsets
+# 
+#
+# NICMOS camera 2 rotation (relative to OTA)
+#
+   45.0  = NICMOS Camera 2 rotation
+#
+# Axial offset of NICMOS 2 camera
+#
+  317.1     -311.3   = NICMOS Camera 2 V2,V3 axial offset
+#
+# NICMOS 2 pixel scale (don't change this, it's not what you think!)
+#
+  0.0756812  = arcsec/pixel
+#
+# NICMOS cold-mask pads (cameras 2 and 3 only)
+#
+0.0000    0.7655   -0.7706 = NICMOS Pad V2
+0.9021   -0.4615   -0.4564 = NICMOS Pad V3
+0.1650    0.1650    0.1650 = NICMOS Pad X size 
+0.1410    0.1410    0.1410 = NICMOS Pad Y size 
+0.0000 -121.1500  121.5200 = NICMOS Pad rotation (degrees)
+#
+# Conversion factor from defocus in PAM space (mm) to wavefront error (microns)
+#
+ -0.0475   # PAM(mm) -> z4(microns)
+#
+# Aberration focus dependences (aberrations in microns in detector coordinates)
+# z = c1*z4^2 + c2*z4 + c3 (where c3 is supplied in the Zernike table file)
+#
+ 0.0000 -0.0202  = X Astigmatism (z5)
+ 0.0000 -0.0663  = Y Astigmatism (z6)
+ 0.0000  0.0000  = X Coma (z7)
+ 0.0000 -0.0676  = Y Coma (z8)
+ 0.0000  0.0677  = Spherical (z11)
+#
+# Aberration field dependences (aberrations in microns in detector coordinates)
+#
+# Focus (z4)
+#
+   -0.0118360  4.92325e-06  6.80747e-07
+ -4.13502e-05  6.19433e-07 -4.01200e-09
+  1.04970e-07 -2.88192e-09  1.97186e-11
+#
+# X Astigmatism (z5)
+   -0.0419142  0.000267614 -8.50913e-07
+  0.000200381  5.22625e-08  1.16788e-09
+ -3.34117e-07 -3.23222e-09  1.27907e-11
+#
+# 45 degree Astigmatism (z6)
+#
+    0.0232914 -0.000154028  5.79729e-07
+ -0.000164619  1.16237e-06 -5.24005e-09
+ -1.13486e-07 -1.38203e-09  1.68123e-11
+#
+# X Coma (z7)
+#
+  -0.00130092  4.91844e-05 -7.55309e-08
+  4.38350e-05 -7.45321e-07  1.67843e-09
+ -3.76607e-08  1.63131e-09 -8.32521e-12
+#
+# Y Coma (z8)
+#
+    0.0110031 -8.27373e-05  9.52821e-08
+  0.000161762 -1.35659e-06  1.73407e-09
+ -6.49740e-07  1.10046e-09  1.15120e-11

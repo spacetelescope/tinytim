@@ -1,0 +1,22 @@
+# Pupil Table :  costarf96.pup
+# Do not change the order of these entries!
+# Date : July 2000
+# COSTAR corrected FOC f/96 information
+#----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+#
+ 90 700  = min, max detector wavelength (nm)
+ -124.0  = COSTAR corrected FOC f/96 rotation relative to OTA
+  0.0142 = COSTAR corrected FOC f/96 pixel size (arcsec)
+  -241.800  -141.000 = COSTAR+FOC f/96 V2,V3 axial offset

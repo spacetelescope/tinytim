@@ -1,0 +1,28 @@
+# Zernike file for NICMOS 1 (with cryocooler before May 16, 2003)
+# Coefficients for field center
+# April 2003 
+#
+ 547.0 # Reference wavelength (nm) for coeffs
+  22    # Last Zernike in table 
+0.000000 # Z1 : Constant
+0.000000 # Z2 : X Tilt
+0.000000 # Z3 : Y Tilt
+0.000000 # Z4 : Focus
+0.032900 # Z5 : 0 deg Astigmatism
+0.035400 # Z6 : 45 deg Astigmatism
+0.06800 # Z7 : V2 Coma
+0.00600 # Z8 : V3 Coma
+0.005963 # Z9 : X Clover
+0.003067 # Z10 : Y Clover
+-0.02230 # Z11 : 3rd order Spherical
+0.000000 # Z12 : X Spher. Astig
+0.000000 # Z13 : Y Spher. Astig
+0.000000 # Z14 : X Ashtray
+0.000000 # Z15 : Y Ashtray
+0.000000 # Z16
+0.000000 # Z17
+0.000000 # Z18
+0.000000 # Z19
+0.000000 # Z20
+0.000000 # Z21
+0.000000 # Z22 : 5th order Spherical

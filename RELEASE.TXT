@@ -1,0 +1,259 @@
+
+  Tiny Tim Release Notes
+  ----------------------
+
+  Version 1.0
+  -----------
+  January 1992  -  
+        Tiny Tim v1.00 released
+
+  February 6, 1992  -  
+        Tiny Tim v1.01 released - added sinc interpolation option
+
+  February 14, 1992 - 
+        Tiny Tim v1.02 released - Fixed incorrect FOC f96 rotation value
+        in pupil.tab file.  The old value was obtained from TIM and was
+        46 degrees, the correct value is 56 degrees.  This is also being
+        fixed in TIM.
+
+  February 26, 1992 -
+	Tiny Tim v1.03 released - Fixed a problem in which the filenames
+	were too long for the allocated character strings.  The strings
+	are now 150 characters long.
+
+  Version 2.0
+  -----------
+
+  May 1992 -
+	Tiny Tim v2.0 released.  Added WFPC II and COSTAR-corrected FOC
+	f48 and f96 camera options; added table of date-dependent aberrations
+	which account for mirror moves and desorption; changed the pixel
+	integration method for more accurate (and often faster) results;
+	fixed bugs in the obscuration drawing routines; change the names
+	of some files and deleted Version 1 routines not used in Version 2;
+	removed code to compute aperture throughput (effects caused by 
+	the position-dependent throughput is supposedly taken care of by
+	flat fielding).
+
+  Version 2.1
+  -----------
+
+  August 1992 -
+	Version 2.1 uses a convergence-tested sinc interpolation routine
+	in the pixel integration code.  This gets rid of most of the bad
+	pixels seen in some Version 2.0 PSFs.  A bug was fixed in the 
+	FITS writer which caused some occasional errors on the VAX side.
+	The default aberrations for WFPC now include coma.  The numbering
+	of the WFPC II WFC cameras was changed, and the additional 
+	rotation of the PC II spiders was removed.  The default aberration
+	table for the current HST cameras has been updated to reflect the
+	recent (August 1992) mirror move.  A revised desorption equation
+	has also be implemented.  The image file output code has been 
+	modified to allow faster I/O on the VAX side.  The FOC pixel size
+	was changed to 25 microns to be in better agreement with the pixel
+	scale on geometrically corrected images.
+
+  October 1992 -
+	WFPC II fixes only.  Fixed errors in the WFPC II pupil function.
+	The spiders were not being drawn for the WFPC II PC camera and
+	the spiders for the WFPC II WFC cameras were only half the width
+	they should be.  The obscuration shifting code was wrong for
+	WFPC II.  All have been fixed, but the actual orientation of
+	the WFPC II spiders relative to the OTA is still unknown. 
+	This is relatively insignificant.
+
+
+  Version 2.2
+  -----------
+
+  November 1992 -
+	Version 2.2 was an experimental version, not released.
+
+  Version 2.3
+  -----------
+
+  January 1993 -
+	Added the August and November 1992 mirror moves to the focus
+	table, and included an updated desorption curve to aber.c.
+	An extra vignetting source was added to the Wide Field Cameras
+	to account for the attenuation of one side of the wings which
+	occurs uniformly across a chip.  This is a definite and unabashed
+	kludge, and I don't want to hear any complaints about it!  This
+	gets rid of most of the "cratering" in deconvolutions caused by 
+	previous PSFs being too bright in the wings.  You can omit this
+	by setting all of the values in the "Wfc # vignetting params"
+	line to zero in the parameter file produced by tiny1.
+
+  Version 2.4
+  -----------
+
+  August 1993 -
+	Added FOC refocus.  Modified integration routine to reduce errors
+	caused by FFT noise.  Added WFPC2 filter throughputs.  Modified
+	mirror map shifting code.  User can now choose to generate a
+	subsampled PSF even if the detector is not undersampling.  All
+	code was modified to that it would compile using DEC C on Alpha
+	VMS systems.  Did some serious changing of the default aberrations,
+	based on recent phase retrieval fits.  Includes a "fudge factor"
+	to get the FOC focus to agree with the observed stuff.  The code
+	was modified to run smoothly on DEC Alpha systems.
+
+  Version 3.0
+  -----------
+
+  March 1994 -
+	Added new mirror maps for WFPC and WFPC2 based on on-orbit WFPC2
+	phase retrieval.  Included measured aberrations for WFPC2 and 
+	COSTAR+FOC.  Included WFPC2 camera focus offsets and position-
+	dependent focus due to CCD tilts.  Normally sampled WFPC2 PSFs are
+	now convolved with the average measured pixel scattering function.
+	Updated COSTAR+FOC pupil rotation and aperture location.
+
+  Version 3.0a
+  ------------
+
+  April 1994 -
+	Fixed bug in which memory was not cleared when allocated.  Fixed
+	bug in which the scattering and focus slope flags were switched
+	inside the software.  Adjusted sinc limit radius for wavelengths
+	greater than 600 nm, getting rid of some artifacts which show up
+	at longer wavelengths.  Added #include stuff for MSDOS. Modified
+	tiny1 so that it tells the user that the subsampling factor is
+	along an axis, plus clarified it in the manual.
+
+ Version 4.0
+ -----------
+
+ August 1994 -
+	Use new mirror maps for FOC and FOC+COSTAR by adjusting new map
+	with secondary mirror map obtained from ground based tests.  Revised
+	default aberrations and desorption curve.  Allow WFPC2 and WF/PC-1
+	PSFs to be computed up to a diameter of 15" for wavelengths longer
+	than 380 nm and 30" for wavelengths longer than 550 nm.  Fixed bug
+	in Alpha VMS file writer which was slowing down I/O.  Modified the
+	FFT routine which results in speed improvements of up to 40% (thanks
+	to David Robinson for the suggestions).
+
+
+ Version 4.0a
+ ------------
+
+ August 1994 -
+	Fixed memory leak caused by failure to deallocate temporary array.
+	Adjusted rotation of WFPC1 PC6 by 0.6 degrees.
+
+ Version 4.0b
+ ------------
+
+ September 1994 -
+	Fixed bug in FFT routine which caused severely erroneous results
+	in PSFs using 1280 grid size.  Critically sampled PSF array was
+	being improperly passed to output routines; fixed error.
+
+ Version 4.1
+ -----------
+
+ February 1996 -
+	Added option to use many wavelengths to sample medium, wide, and
+	longpass filters for WF/PC-1 and WFPC2.  Updated WFPC2 pixel scatter
+	kernel.  Fixed mirror map shifting for COSTAR+FOC.  Included
+	aberrations for each PC camera based on phase retrieval.  Fixed
+	bad WF/PC-1 WF4 aberration file.
+
+ Version 4.1N - NICMOS Support - Richard Hook (ST-ECF, rhook@eso.org)
+ -----------------------------
+
+ October 1996 - 
+        preliminary support for producing PSFs for the 2nd generation
+        NICMOS instrument on HST were added. The options for specifying
+        the wavelengths and weights were also modified to allow a text
+        file of wavelengths and weights to be used.
+
+ Version 4.2
+ -----------
+
+ November 1996 -
+        Version with NICMOS support tidied up, tested and better documented.
+        Support for old mirror maps removed.  Added warning message about
+        convolving subsampled WFPC2 PSFs with the pixel scattering kernel.
+
+ Version 4.3
+ -----------
+ June 1997 -
+	Added field- and focus-dependent aberrations to Nicmos; added
+	determination of Nicmos focus from PAM positions; fixed bug which
+	crashed the program when generating large Nicmos PSFs; added Nicmos
+	filter curve files to the distribution.
+
+ Version 4.4
+ -----------
+ October 1997 -
+	Added NICMOS 1 & 2 cold mask offsets; reduced number of wavelengths
+	in NICMOS filter files; changed default aberrations for NICMOS 3
+	to campaign mode values; minor bug fixes; completely rewrote the
+	manual
+
+ Version 5.0
+ -----------
+ November 1999 -
+	Added STIS imaging modes (field center aberrations); preliminary
+	ACS support; time-dependent NICMOS aberrations and cold mask
+	positions; WFPC2 field-dependent aberrations; new choices for
+	object spectrum includes list of 17 spectra or blackbody; NICMOS
+	can now use spectra with included filters; halo in WFPC2 F1042M
+	added; multithreading support added; all filters revised and
+	optimized; low-weight skipping implemented
+
+ Version 5.0a
+ ------------
+ January 2000 -
+        Fixed bug that ignored the WMAG value if it was less than 1.0.
+
+ Version 5.0b
+ ------------
+ April 2000 - 
+	Fixed memory leak.
+
+ Version 5.0c
+ ------------
+ May 2000 -
+	Fixed problem with compilation and execution on HP machines;
+	fixed problem with pow() function on Decstations.
+
+ Version 6.0
+ -----------
+ July 2001 -
+	General : Added flux type to user-defined spectrum table;
+		added power laws as spectrum options; changed interpolator
+		to damped sinc
+	STIS : Added red halo & FUV MAMA charge diffusion halo
+	ACS  : Updated instrument parameters; added HRC red halo & MAMA
+		charge diffusion; added tiny3 for geometric distortion;
+		added HRC coronagraph off-spot PSF
+
+ Version 6.1
+ -----------
+ April 2003 -
+	General : fixed bugs in FITS output routine; fixed some memory leaks
+        ACS : Updated aberrations to on-orbit values; added field-dependent
+                charge diffusion for CCD cameras; updated geometric distortion
+                coefficients; updated field-dependent aberration coefficients
+        NICMOS : Updated aberrations and cold mask positions for post-SM3 era
+
+ Version 6.1a
+ -----------
+ May 2003 - fixed bugs with HRC coronagraphic off-spot PSFs
+
+ Version 6.1b (unreleased)
+ -------------------------
+ Fixed small bugs in FITS file output; added compilation settings for Mac OS X
+
+ Version 6.2
+ -----------
+ Jan 2004 - ACS/HRC field dependent aberration and charge diffusion equations 
+ had wrong coefficients - fixed; changed sparcstation to solaris in makefile
+
+ Version 6.3
+ -----------
+ Added elliptical Gaussian jitter
+

@@ -1,0 +1,39 @@
+OBJ =  acs.o distort.o entry.o fft.o fitsio.o halo.o image.o inputs.o misc.o param.o \
+        rdpupil.o system.o tiny3.o v2v3.o zernike.o 
+
+.c.o: 
+	$(TINYTIMCC) $(CFLAGS) -c $<
+
+tiny3: 	$(OBJ)
+	$(TINYTIMCC) $(OBJ) $(LFLAGS) -o tiny3 
+
+acs.o:       	acs.c tinytim.h
+
+distort.o:	distort.c tinytim.h
+
+entry.o:	entry.c tinytim.h
+
+fft.o:		fft.c tinytim.h
+
+fitsio.o:       fitsio.c tinytim.h
+
+halo.o:		halo.c tinytim.h
+
+image.o:	image.c tinytim.h
+
+inputs.o:	inputs.c tinytim.h
+
+misc.o:		misc.c tinytim.h
+
+param.o:	param.c tinytim.h
+
+rdpupil.o:	rdpupil.c tinytim.h
+
+system.o:	system.c tinytim.h
+
+tiny3.o:    	tiny3.c tinytim.h
+
+v2v3.o:		v2v3.c tinytim.h
+
+zernike.o:	zernike.c tinytim.h
+

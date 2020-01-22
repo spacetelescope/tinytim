@@ -1,0 +1,25 @@
+
+  Please read the manual (tinytim.pdf) included with the
+  Tiny Tim distribution.
+  
+  The files in this directory contain the code for the Tiny Tim
+  PSF generator.
+
+       (UNIX) tinytimv63.tar.Z
+       -----------------------
+            Compressed tar file for UNIX systems.  This contains the
+            Tiny Tim source code (in C) which must be compiled and
+            linked (see the file READ.ME).
+
+	    To get it via ftp, do the following :
+
+	              FTP> type binary
+                      FTP> get tinytimv63.tar.Z
+
+            To unpack it into the current directory :
+
+                      uncompress tinytimv63.tar.Z
+                      tar xvf tinytimv63.tar
+
+  
+

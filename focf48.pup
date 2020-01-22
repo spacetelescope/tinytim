@@ -1,0 +1,22 @@
+# Pupil Table :  focf48.pup
+# Do not change the order of these entries!
+# Date : July 2000
+# FOC f/48 (before COSTAR) information
+#-----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+#
+ 90 700  = min, max detector wavelength (nm)
+  -65.0  = FOC f/48 Rotation relative to OTA
+ 0.04498 = FOC f/48 pixel size (arcsec)
+ -197.000  -341.127 = FOC f48 V2,V3 axial offset

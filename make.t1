@@ -1,0 +1,30 @@
+OBJ2 = compgrid.o entry.o inputs.o misc.o outputs.o rdpupil.o spectrum.o \
+        system.o tiny1.o v2v3.o zernike.o
+
+.c.o: 
+	$(TINYTIMCC) $(CFLAGS) -c $<
+
+tiny1: $(OBJ2)
+	$(TINYTIMCC) $(OBJ2) $(LFLAGS) -o tiny1
+
+compgrid.o:	compgrid.c tinytim.h
+
+entry.o:	entry.c tinytim.h
+
+inputs.o:	inputs.c tinytim.h
+
+misc.o:		misc.c tinytim.h
+
+outputs.o:	outputs.c tinytim.h
+
+rdpupil.o:	rdpupil.c tinytim.h
+
+spectrum.o:	spectrum.c tinytim.h
+
+system.o:	system.c tinytim.h
+
+tiny1.o:	tiny1.c tinytim.h
+
+v2v3.o:         v2v3.c tinytim.h
+
+zernike.o:	zernike.c tinytim.h

@@ -1,0 +1,39 @@
+# Pupil Table : wfpc2pc1.pup
+# Do not change the order of these entries!
+# Date : July 2000
+# WFPC2 PC1 data
+#-----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+#
+  100 1200 = min, max detector wavelength (nm)
+  396  430 = WFPC2 PC obscuration alignment center
+     0.410 = WFPC2 PC Secondary Mirror Radius
+     0.058 = WFPC2 PC Spider Width
+      -45. = WFPC2 PC Rotation relative to OTA
+   0.04555 = WFPC2 PC pixel size (arcsec)
+  -2.374 30.268  = WFPC2 PC detector center V2,V3 pupil coordinates
+#
+# WFPC2 PC field dependent aberration coefficients
+#
+ -3.647E-05 -4.174E-05  3.393E-08  1.321E-07 -1.105E-07  # Focus   Z4
+ -2.308E-06  6.309E-06  2.952E-08  5.241E-08 -1.205E-07  # X Astig Z5
+  7.829E-06 -4.103E-06 -4.270E-08 -1.701E-08  5.257E-09  # Y Astig Z6
+  3.861E-05 -2.058E-05  1.469E-08  7.179E-09 -2.700E-08  # X Coma  Z7
+ -3.187E-05 -2.102E-05 -3.333E-09  5.676E-09 -1.908E-08  # Y Coma  Z8
+#
+# WFPC2 CCD Pixel Scattering Function (estimates charge diffusion)
+#
+0.0125 0.05 0.0125
+0.0500 0.75 0.0500
+0.0125 0.05 0.0125

@@ -1,0 +1,25 @@
+# Pupil Table :  wfpcpc7.pup
+# Do not change the order of these entries!
+# Date : July 2000
+# WFPC PC7 information
+#-----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+#
+  100 1200 = min, max wavelength (nm)
+  332  603 = PC7 obscuration alignment center
+     0.430 = PC Secondary Mirror Radius
+     0.056 = PC Spider Width
+    180.22 = PC7 Rotation relative to OTA
+   0.04359 = PC pixel size (arcsec)
+ -21.42  -10.59 = V2,V3 pupil coordinates of pixel (412,412)

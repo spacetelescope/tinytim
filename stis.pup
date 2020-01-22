@@ -1,0 +1,72 @@
+# Pupil Table :  stis.pup
+# Do not change the order of these entries!
+# Date : December 1997
+# STIS pupil information (dummy values)
+#----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+# STIS wavelength range
+#
+  100 1200  = STIS CCD min, max wavelength (nm)
+  100  500  = STIS NUV min, max wavelength (nm)
+  100  300  = STIS FUV min, max wavelength (nm)
+#
+# STIS camera rotations (relative to OTA)
+#
+ 225.0  = STIS CCD channel
+ 225.0  = STIS NUV/MAMA channel
+ 225.0  = STIS FUV/MAMA channel
+#
+# STIS pixel sizes
+#
+  0.0508 = STIS CCD pixel size (arcsec)
+  0.0247 = STIS NUV pixel size (arcsec)
+  0.0247 = STIS FUV pixel size (arcsec)
+#
+# STIS axial offset
+#
+  214.2247  225.1528 = STIS V2,V3 axial offset
+#
+# STIS Lyot Stop X, Y radii (relative to pupil radius), CCD mode only
+#
+  0.815  0.855  = STIS Lyot Stop X, Y Radii
+#
+# STIS Lyot Stop X, Y offsets (relative to pupil radius), CCD mode only
+#
+  0.030 0.036 = STIS Lyot stop X,Y offsets
+#
+# STIS CCD pixel scattering function kernels (CCD pixel resolution)
+#
+0.400  = Wavelength (microns) of kernel 1
+#
+# Kernel 1
+#
+0.0200 0.0600 0.0200
+0.0600 0.6800 0.0600
+0.0200 0.0600 0.0200
+#
+0.550  = Wavelength (microns) of kernel 2
+#
+# Kernel 2
+#
+0.0175 0.0500 0.0175
+0.0500 0.7300 0.0500
+0.0175 0.0500 0.0175
+#
+0.800  = Wavelength (microns) of kernel 3
+#
+# Kernel 3
+#
+0.0150 0.0200 0.0150
+0.0200 0.8600 0.0200
+0.0150 0.0200 0.0150

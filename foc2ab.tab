@@ -1,0 +1,26 @@
+# Zernike file for COSTAR+FOC f96 (f151)
+# July 1994
+  547.     # Reference wavelength (nm)
+  22       # Last Zernike in file
+  0.       # Z1 = (Not used)
+  0.       # Z2 = X (V2) tilt
+  0.       # Z3 = Y (V3) tilt
+  0.       # Z4 = Focus
+ -0.0227   # Z5 = 0 degree astigmatism
+  0.0053   # Z6 = 45 degree astigmatism
+  0.0247   # Z7 = X (V2) coma
+  0.0000   # Z8 = Y (V3) coma
+  0.0127   # Z9 = X (V2) clover
+  0.0125   # Z10 = Y (V3) clover
+ -0.0155   # Z11 = 3rd order spherical
+  0.       # Z12 = 0 degree Spherical astigmatism
+  0.       # Z13 = 45 degree Spherical astigmatism
+  0.       # Z14 = X (V2) Ashtray
+  0.       # Z15 = Y (V3) Ashtray
+  0.       # Z16
+  0.       # Z17
+  0.       # Z18
+  0.       # Z19
+  0.       # Z20
+  0.       # Z21
+ -0.0012   # Z22 = 5th order spherical

@@ -1,0 +1,66 @@
+OBJ =  acs.c convotf.o cpupil.o distort.o entry.o fitsio.o fft.o halo.o image.o inputs.o inter.o \
+        intpsf.o map.o misc.o monopsf.o opd.o outputs.o param.o \
+        polypsf.o psf.o pupil.o rdpupil.o rotate.o system.o \
+        tiny2.o v2v3.o vignet.o zernike.o
+
+.c.o: 
+	$(TINYTIMCC) $(CFLAGS) -c $<
+
+tiny2: 	$(OBJ)
+	$(TINYTIMCC) $(CFLAGS) $(OBJ) $(LFLAGS) -o tiny2 
+
+acs.o:		acs.c tinytim.h
+
+convotf.o:	convotf.c tinytim.h
+
+cpupil.o:       cpupil.c tinytim.h
+
+distort.o:      distort.c tinytim.h
+
+entry.o:	entry.c tinytim.h
+
+fft.o:		fft.c tinytim.h
+
+fitsio.o:       fitsio.c tinytim.h
+
+halo.o:         halo.c tinytim.h
+
+image.o:	image.c tinytim.h
+
+inputs.o:	inputs.c tinytim.h
+
+inter.o:        inter.c tinytim.h
+
+intpsf.o:	intpsf.c tinytim.h
+
+map.o:		map.c tinytim.h
+
+misc.o:		misc.c tinytim.h
+
+monopsf.o:	monopsf.c tinytim.h
+
+opd.o:		opd.c tinytim.h
+
+outputs.o:	outputs.c tinytim.h
+
+param.o:	param.c tinytim.h
+
+polypsf.o:	polypsf.c tinytim.h
+
+psf.o:		psf.c tinytim.h
+
+pupil.o:	pupil.c tinytim.h
+
+rdpupil.o:	rdpupil.c tinytim.h
+
+rotate.o:	rotate.c tinytim.h
+
+system.o:	system.c tinytim.h
+
+tiny2.o:    	tiny2.c tinytim.h
+
+v2v3.o:		v2v3.c tinytim.h
+
+vignet.o:	vignet.c tinytim.h
+
+zernike.o:	zernike.c tinytim.h

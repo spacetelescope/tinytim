@@ -1,0 +1,27 @@
+
+ File : READ.ME
+
+  ------------------------------------------------------------------------ 
+    These files contain the source to Tiny Tim, the HST PSF generator.
+  To compile and link the code, do the following (more details are 
+  provided in the manual, tinytim.ps) :
+  ------------------------------------------------------------------------
+
+  On UNIX :
+      If you have a Sun : make solaris
+      If you have a Linux box :  make linux
+      If you have a Mac :  make macosx
+
+      If you have something else, then edit Makefile and replace the 
+         flags -f with whatever forces floats to be computed in single 
+	 precision, and -O with whatever results in the highest level of 
+	 optimization.  After you have done this, enter 
+
+			   make other
+
+
+  Tiny Tim supports multithreading on multiple-processor Linux and
+  Solaris systems.  See the manual (tinytim.pdf) for compilation
+  instructions.
+
+ 

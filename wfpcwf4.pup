@@ -1,0 +1,34 @@
+# Pupil Table :  wfpcwf4.pup
+# Do not change the order of these entries!
+# Date : July 2000
+# WFPC WFC4 information
+#-----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+#
+  100 1200 = min, max wavelength (nm)
+  500  500 = WF4 obscuration alignment center
+     0.430 = WFC Secondary Mirror Radius
+     0.056 = WFC Spider Width
+    225.31 = WF4 Rotation relative to OTA
+    0.1012 = WFC pixel size (arcsec)
+#
+# WFC entrance baffle radius
+#
+ 1.25  = WFC Entrance Aperture Radius
+#
+# WFC vignetting apertures (unknown cause, empirically determined from data */
+#
+ 1.0 -0.06 -0.02 0.85 = Wfc 4 vignetting radius, xc, yc, inner radius
+#
+  -60.30  6.20  = V2,V3 pupil coordinates of pixel (412,412)

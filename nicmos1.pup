@@ -1,0 +1,78 @@
+# Pupil Table :  nicmos1.pup
+# Do not change the order of these entries!
+# Date : June 1997
+#----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+# NICMOS wavelength range
+#
+  700 2500  = min, max detector wavelength (nm)
+#
+# NICMOS cold mask obscuration parameters (rough estimates)
+#
+ 0.372 = NICMOS 1 Secondary radius (was 0.365)
+ 0.077 = NICMOS 1 Spider width (was 0.071)
+ 0.955 = NICMOS 1 Outer radius of cold mask (was 0.964)
+#
+# NICMOS1 camera rotation (relative to OTA)
+#
+   45.0  = NICMOS Camera 1 rotation
+#
+# Axial offset of NICMOS1 camera
+#
+  296.7     -292.1   = NICMOS Camera 1 V2,V3 axial offset
+#
+# Conversion factor from defocus in PAM space (mm) to wavefront error (microns)
+#
+ -0.0470   # PAM(mm) -> z4(microns)
+#
+# Aberration focus dependences (aberrations in microns in detector coordinates)
+# z = c1*z4^2 + c2*z4 + c3 (where c3 is supplied in the Zernike table file)
+#
+ 0.0000  0.0269  = X Astigmatism (z5)
+ 0.0000 -0.0266  = Y Astigmatism (z6)
+ 0.0000  0.0000  = X Coma (z7)
+ 0.0000 -0.0677  = Y Coma (z8)
+ 0.0000  0.0000  = Spherical (z11)
+#
+# Aberration field dependences (aberrations in microns in detector coordinates)
+#
+# Focus (z4)
+#
+   -0.0285389  0.000161128 -1.45498e-07
+  4.98090e-05  5.69419e-07 -2.63209e-09
+  2.48721e-07 -3.26693e-09  6.09551e-12
+#
+# X Astigmatism (z5)
+#
+   -0.0200846  0.000174784 -1.13906e-07
+ -6.59776e-05  3.18439e-07 -4.61277e-10
+  2.78366e-07  1.11628e-09 -1.37319e-11
+#
+# 45 degree Astigmatism
+#
+   0.00379199  1.85065e-05 -2.74058e-07
+ -8.03973e-05  1.45577e-06 -6.48694e-09
+  2.78637e-07 -6.85258e-09  1.84370e-11
+#
+# X Coma
+#
+   0.00000000  0.000000000  0.000000000
+   0.00000000  0.000000000  0.000000000
+   0.00000000  0.000000000  0.000000000
+#
+# Y Coma
+#
+   0.00000000  0.000000000  0.000000000
+   0.00000000  0.000000000  0.000000000
+   0.00000000  0.000000000  0.000000000

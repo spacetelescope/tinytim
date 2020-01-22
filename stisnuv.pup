@@ -1,0 +1,22 @@
+# Pupil Table :  stisnuv.pup
+# Do not change the order of these entries!
+# Date : July 2000
+# STIS NUV mode information
+#----------------------------------------------------------------------------
+#
+# Optical Telescope Assembly pupil information
+#
+ 0.330  = OTA Secondary Mirror Radius
+ 0.022  = OTA Spider Width 
+#
+# Mirror pad positions and radii
+#
+  0.8921  0.0000 0.065 = OTA Pad 1 (V3, V2, Pad Radius)
+ -0.4615  0.7555 0.065 = OTA Pad 2
+ -0.4564 -0.7606 0.065 = OTA Pad 3
+#
+#
+  100  500  = STIS NUV min, max wavelength (nm)
+ 225.0      = STIS NUV/MAMA channel rotation relative to OTA
+  0.0247    = STIS NUV pixel size (arcsec)
+  214.2247  225.1528 = STIS V2,V3 axial offset
