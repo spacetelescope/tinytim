@@ -1,9 +1,6 @@
 # Test Zernike file for WFC3 UVIS1 Channel
-# No aberrations at present.
-# March 2008
-#  Initial implementation
-# April 2010
-#  Set Z4-Z8 terms to non-zero to activate coeffs in .pup file
+# March 2008  Initial implementation (no aberrations)
+# April 2010  Set Z4-Z8 terms to non-zero to activate coeffs in .pup file
   547.     # Reference wavelength (nm)
   22       # Last Zernike in file
   0.       # Z1 = (Not used)

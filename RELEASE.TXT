@@ -273,7 +273,7 @@ Despace is in microns between primary and secondary mirrors, with
 negative despace corresponding to moving the mirrors closer together.
 
 Version 7.2
--------------
+-----------
 Feb 2011 
 
 Clarifications to WFC3 and ACS PSF and scene pixel size messages,,
@@ -287,4 +287,21 @@ updated to set the Z4-Z8 coeffs to non-zero, which activates the
 coeffs in the .pup files. The .pup files have had their X/Y astig and
 coma coeffs swapped, to match their intended use in the code.  A 3rd
 charge diffusion kernel has also been added to the UVIS .pup files.
+
+Version 7.3
+-----------
+Mar 2011 
+
+Fix from Marc W. Buie for multi-threading on hosts with more than 5
+CPUs,  limiting threads to 5.
+
+Version 7.4
+-----------
+Jun 2011
+
+Updates to the WFC3 .pup and .tab files. The wfc3_ir.tab file has been
+updated to set the Z4-Z8 coeffs to non-zero, which activates the
+coeffs in the wfc3_ir.pup file. The V2,V3 coordinates for both IR and
+UVIS have been updated using a more recent idctab, as described in the
+files.
 

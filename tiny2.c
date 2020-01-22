@@ -123,7 +123,14 @@ int main( int argc, char *argv[] )
 #endif
 #endif
 	if ( Num_threads > 1 )
+   {
 		printf(" (Multithreaded, %d CPUs detected)", Num_threads);
+      if (Num_threads > MAX_THREADS)
+      {
+         printf(" limiting use to only %d CPUs at once",MAX_THREADS);
+         Num_threads = MAX_THREADS;
+      }
+   }
 	printf("\n");
  
 	Read_params( argv[1] );  /* Read parameter file */

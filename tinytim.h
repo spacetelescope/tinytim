@@ -1,4 +1,4 @@
-#define  VERSION_NUM  7.0
+#define  VERSION_NUM  7.4
 
 /* 1-8 = WF/PC-1 */
 #define  FOC_F48      9

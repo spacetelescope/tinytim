@@ -5,6 +5,9 @@
 # Date : April 2010
 #  Swapped X/Y coeffs for astig and coma
 #  Added 3rd charge diffusion kernel
+# Date : March 2011
+#  Updated V2,V3 (pupil) coordinates for reference position and camera center
+#    using uab1537bi_idc.fits
 # WFC3 UVIS1 pupil information
 #----------------------------------------------------------------------------
 #
@@ -25,7 +28,7 @@
   135.0    = image axis rotation
   0.0400   = nominal pixel size (arcsec)
 #
-#  WFC3 UVIS1 field dependent aberration coefficients (in microns)
+#  WFC3 UVIS1 field dependent aberration coefficients (RMS waves at 632.8 nm)
 #
 # Focus
 #
@@ -78,7 +81,7 @@
 #
 # V2,V3 (pupil) coordinates of reference position
 #
-  -29.0931 -29.2113  =  in arcsec
+  -30.4540 -25.2854  =  in arcsec
 #
 # detector X,Y of reference position
 #
@@ -86,7 +89,7 @@
 #
 # V2,V3 (pupil) coordinates of WFC camera center
 #
-  0.0000 0.00000    =  in arcsec
+  -1.4430 4.0118    =  in arcsec
 #
 # X,Y -> V2 transformation coefficients
 #
@@ -118,8 +121,8 @@
 #
 # Charge diffusion kernels (CCD pixel resolution)
 #
-#  ********* Note - These are based on first inflight-data and were provided by 
-#            Sami-Matias Niemi on 2010-03-03
+#  ********* Note - These are based on thermal vac analysis by George Hartig 
+#            (ISR WFC3 2008-40)
 #
 0.400  = Wavelength (microns) of kernel 1
 #
@@ -146,8 +149,9 @@
 0.007 0.069 0.007
 #                                    
 # Additional field dependent charge diffusion relation coefficients
-# Currently these are just place holders. The small leading value
-# is to avoid division by zero errors in the code at present.
+#
+#  ********* Note - These are based on first inflight-data and were provided by
+#            Sami-Matias Niemi on 2010-03-03
 #
   2  = number of wavelengths at which coefficients are defined
 #
