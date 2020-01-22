@@ -1,3 +1,5 @@
+#ifndef TINYTIM_TINYTIM_H
+#define TINYTIM_TINYTIM_H
 #define  VERSION_NUM  7.5
 
 /* 1-8 = WF/PC-1 */
@@ -46,6 +48,8 @@
 #define  KX  3
 #define  KY  3
 #define  KZ4 2
+
+#include "config.h"
 
 int Num_threads;
 
@@ -344,4 +348,4 @@ void Wfc_vignette( float **image, int nx, int ny );
 void Read_zernike_data( FILE *file );
 void Get_aberrations( struct DateStruct *obs_date );
 void Compute_aberrations( int psf_x, int psf_y );
-
+#endif //TINYTIM_TINYTIM_H

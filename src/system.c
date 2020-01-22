@@ -18,7 +18,7 @@
 /*---------------------------------------------------------------*/
 void Delete_file( char *filename )
 {
-	unlink( filename );
+    unlink( filename );
 }
 
 /*----------------------------------------------------------------
@@ -33,16 +33,20 @@ void Delete_file( char *filename )
 void Default_dir( char *string, char *filename )
 {
 
-	char    *temp;
-	if ( (temp = getenv("TINYTIM")) == NULL )
-	{
-		fprintf(stderr, 
-		  "Error: Environment variable TINYTIM undefined\n");
-		exit(2);
-	}
-	strcpy( filename, temp );
-	strcat( filename, "/" );
-	strcat( filename, string );
+    char    *temp;
+    if ( (temp = getenv("TINYTIM")) == NULL )
+    {
+        fprintf(stderr, "Warning: Environment variable TINYTIM undefined\n");
+        if ( (temp = malloc(sizeof(char) * strlen(CONFIG_DEFAULT_DIR) + 1)) == NULL) {
+            perror("Default_dir");
+            exit(1);
+        }
+        fprintf(stderr, "Using default data directory: %s\n", CONFIG_DEFAULT_DIR);
+        strcpy( temp, CONFIG_DEFAULT_DIR );
+    }
+
+    strcpy( filename, temp );
+    strcat( filename, "/" );
+    strcat( filename, string );
 
 } /* Default_dir */
-

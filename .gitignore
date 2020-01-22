@@ -1,0 +1,6 @@
+*.o
+config.h
+makemaps
+tiny1
+tiny2
+tiny3

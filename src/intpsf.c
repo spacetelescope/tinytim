@@ -3,6 +3,7 @@
 
 #ifndef MACOSX
 #include <malloc.h>
+#include <stdlib.h>
 #else
 #include <stdlib.h>
 #endif
