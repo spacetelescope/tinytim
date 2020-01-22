@@ -257,3 +257,16 @@
  -----------
  Added elliptical Gaussian jitter
 
+
+Version 7.0
+-----------
+WFC3 support
+
+
+Version 7.1
+-----------
+Added "secondary mirror despace" as a parameter to tiny1 which is used to modify
+the Z4 Focus parameter as follows:   Z4 +=  despace * 0.011.   Despace is in microns
+between primary and secondary mirrors, with negative despace corresponding to moving
+the mirrors closer together.
+

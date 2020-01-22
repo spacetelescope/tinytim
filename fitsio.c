@@ -78,11 +78,11 @@ static int Which_byte_order( void )
 /*-------------------------------------------------------------------------*/
 static void Report_error( char *message, FILE *file )
 {
-	printf( message );
-	printf( "\n" );
-	if ( file != NULL )
-		fclose( file );
-	exit(0);
+  fprintf( stderr, message );
+  fprintf( stderr, "\n" );
+  if ( file != NULL )
+    fclose( file );
+  exit(-1);
 }
 
 /*-------------------------------------------------------------------------*/
